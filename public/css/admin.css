@@ -1,0 +1,230 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+body {
+    background-color: #efefef;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    text-align: center;
+    font-family: "Roboto", sans-serif;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.navbar {
+    background-color: white;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.navbar-brand img {
+    margin-right: 10px;
+    height: 40px;
+}
+
+.bgnavborder {
+    background-color: #b02532;
+}
+
+.account {
+    margin-right: 50px;
+}
+
+.dropdown span {
+    font-size: 18px;
+    font-weight: normal;
+    text-decoration: none;
+}
+
+.dropdown-menu li {
+    font-size: 18px;
+    font-weight: normal;
+    color: #000000;
+    text-decoration: none;
+}
+
+
+
+.dropdown-menu {
+    min-width: 229px;
+    max-width: 350px;
+    border-radius: 14px;
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+}
+
+.dropdown-item:hover {
+    background-color: #d9d7d7;
+    border-radius: 5px;
+    width: 92%;
+}
+
+.dropdownhover {
+    transition: transform 0.3s ease-in-out;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.dropdownhover:hover {
+    background-color: #d6d6d6;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    transform: scale(1.05);
+}
+
+/* Base Layout */
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.content {
+    transition: all 0.3s ease-in-out;
+    flex: 1;
+    background-color: #ecf0f1;
+    overflow-y: auto;
+    height: auto;
+}
+
+.sidebar {
+    background: #ffd64e;
+    width: auto;
+    height: 100vh;
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
+}
+
+/* Mobile Styles */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        transform: translateX(-100%);
+        z-index: 1050;
+        width: 270px;
+        height: 100vh;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    /* Overlay effect */
+    .sidebar.active + .content::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        pointer-events: auto; /* Allows clicks to close sidebar */
+    }
+}
+
+.admindropdown {
+    min-width: 140px;
+    max-width: 350px;
+    margin-top: 90px;
+}
+
+.adminaccount {
+    min-width: auto;
+    max-width: 350px;
+    background-color: #ebeaea;
+    border-radius: 10px;
+}
+
+.adminaccount:hover {
+    background-color: #d6d6d6;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+aside {
+    width: 270px;
+    height: 100vh;
+    background: #efefef;
+    padding: 20px;
+}
+
+aside a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 18px;
+    color: #181818;
+    border-radius: 5px;
+    padding: 10px;
+    margin-left: 8px;
+}
+
+aside a:hover {
+    background: #dcdada;
+    color: rgb(51, 50, 50);
+}
+
+.sidebar-link.active,
+.sidebar-sublink.active {
+    background: #b02532 !important;
+    color: white !important;
+}
+
+/* Ensure dropdown parent links show active state */
+.dropdown .sidebar-link.active {
+    background: #b02532 !important;
+    color: white !important;
+}
+
+/* Style for active dropdown items */
+.dropdown-menu .sidebar-sublink.active {
+    background: #b02532 !important;
+    color: white !important;
+    width: 92%;
+    border-radius: 5px;
+}
+
+aside a i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+aside .sidebar-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #6c757d;
+    margin-top: 30px;
+    margin-bottom: 14px;
+    padding-left: 10px;
+    display: flex;
+    align-items: flex-start;
+}
+
+aside ul {
+    padding-left: 0;
+    list-style: none;
+    margin: 0;
+}
+
+aside li:not(.sidebar-title) {
+    margin-bottom: 8px;
+}
+
+.dropdown-toggle {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}

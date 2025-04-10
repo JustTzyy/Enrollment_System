@@ -1,0 +1,100 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+body {
+    background-image: url("/image/background.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    text-align: center;
+    font-family: "Roboto", sans-serif;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    background-color: #ffffff;
+    border-radius: 15px;
+    height: 34rem;
+    width: 50rem;
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
+        rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+}
+
+.card-img-top {
+    width: 40rem;
+}
+
+.card-title {
+    color: rgb(178, 0, 0);
+    font-size: 28px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+}
+
+.btn {
+    background-color: #af2532;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.btn:hover {
+    background-color: #8e1e29;
+    transform: translateY(-3px);
+    color: #ffffff;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.forgotpass {
+    color: #af2532;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.forgotpass:hover {
+    text-decoration: underline;
+    transform: translateY(-1px);
+}
+
+.modal-content {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.modal-img {
+    width: 30rem;
+    height: auto;
+}
+
+.modal-dialog {
+    max-width: 600px;
+    width: 95%;
+}
+
+.modal-text {
+    font-size: 18px;
+    font-family: "Poppins", sans-serif;
+    color: rgb(46, 46, 46);
+    text-align: justify;
+}

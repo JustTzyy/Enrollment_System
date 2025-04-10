@@ -1,0 +1,163 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+body {
+    font-family: "Roboto", sans-serif;
+    height: 100vh;
+   
+}
+
+h1 {
+    font-size: clamp(28px, 5vw, 43px); /* Responsive font size */
+    margin-top: 20px;
+    color: #880202;
+    font-weight: bold;
+}
+
+p {
+    font-size: clamp(18px, 4vw, 30px); /* Adjusts based on screen size */
+    color: #000000;
+    font-weight: 500;
+}
+
+.table {
+    border-radius: 10px !important;
+}
+.styled-button {
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+.styled-button:hover {
+    transform: translateY(-2px);
+}
+
+td.d-flex {
+    flex-wrap: wrap;
+    gap: 10px; /* Ensure proper spacing */
+}
+
+.search-container {
+    position: relative;
+    width: 250px;
+    margin: 20px;
+}
+
+.search-input {
+    width: 105%;
+    padding: 8px 40px 8px 15px;
+    border: 2px solid #ccc;
+    border-radius: 25px;
+    outline: none;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.search-input:focus {
+    border-color: #b6b6b6;
+}
+
+.search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+}
+
+.search-input::placeholder {
+    font-style: italic;
+    color: #999;
+}
+
+.btncustom {
+    background-color: #009605;
+    color: white;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    border: none;
+    padding: 8px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-weight: 500;
+    font-size: 16px;
+    border-radius: 14px;
+}
+
+.btncustom:hover {
+    background-color: #007a04;
+    transform: translateY(-2px);
+    color: white;
+    font-weight: 500;
+}
+
+.btnarchive {
+    background-color: #5f5f5f;
+    color: white;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    border: none;
+    padding: 8px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-weight: 500;
+    font-size: 16px;
+    border-radius: 14px;
+}
+
+.btnarchive:hover {
+    background-color: #353535;
+    transform: translateY(-2px);
+    color: white;
+    font-weight: 500;
+}
+
+.btnassignment {
+    background-color: #73dcff;
+    color: white;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    border: none;
+    padding: 8px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-weight: 500;
+    font-size: 16px;
+    border-radius: 14px;
+}
+
+.btnassignment:hover {
+    background-color: #53e8ff;
+    transform: translateY(-2px);
+    color: white;
+    font-weight: 500;
+}
+
+.labelmodal {
+    margin: 10px;
+}
+
+.form-label {
+    color: #880202;
+    font-size: 17px;
+    margin-left: 8px;
+}
+
+.date {
+    width: 123%;
+    padding: 8px 30px 8px 15px;
+    border: 2px solid #ccc;
+    border-radius: 25px;
+    outline: none;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.modalbody {
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    text-align: left;
+}
