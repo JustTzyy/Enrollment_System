@@ -15,7 +15,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SettingController;
 
 
-
+//Tan awon nato kong ma change sa git
 Route::get('/', function () {
     return view('welcome');
 });
