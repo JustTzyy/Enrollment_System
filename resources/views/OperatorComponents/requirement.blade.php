@@ -1,24 +1,19 @@
-@extends('Dashboard.admin')
+@extends('Dashboard.operator')
 
 @section('title', 'UMIANKonek | Admin')
 
-@section('content')
+@section('operatorcontent')
     <header class="text-center mb-2">
         <h1>STAFF MANAGEMENT</h1>
-        <p>REQUIREMENT</p>
+        <p>OPERATORS</p>
     </header>
 
     {{-- SEARCH/ADD --}}
     <div class="d-flex justify-content-between align-items-center mt-5 flex-wrap gap-3">
         <!-- Search Input -->
         <div class="search-container">
-            <form action="{{ route('AdminComponents.requirement') }}" method="GET">
-                <div class="d-flex align-items-center">
-                    <input type="text" name="search" class="search-input" placeholder="Search..."
-                        value="{{ request('search') }}">
-                    <i class="fas fa-search search-icon"></i>
-                </div>
-            </form>
+            <input type="text" class="search-input" placeholder="Search...">
+            <i class="fas fa-search search-icon"></i>
         </div>
 
         <!-- Button Group Aligned to End -->
@@ -38,7 +33,7 @@
                     <th scope="col">EF</th>
                     <th scope="col">GM</th>
                     <th scope="col">F137</th>
-                    <th scope="col">PSA</th>
+                    <th scope="col">PSO</th>
                     <th scope="col">GC</th>
                     <th scope="col">NCAE</th>
                 </tr>
@@ -63,32 +58,5 @@
                 @endforeach
             </tbody>
         </table>
-        <!-- Hereee -->
-    <nav aria-label="Page navigation example">
-    <ul class="pagination">
-      @if ($users->onFirstPage())
-      <li class="page-item disabled"><span class="page-link">Previous</span></li>
-    @else
-      <li class="page-item">
-      <a class="page-link" href="{{ $users->previousPageUrl() }}">Previous</a>
-      </li>
-    @endif
-
-      @foreach ($users->links()->elements[0] as $page => $url)
-      <li class="page-item {{ $users->currentPage() == $page ? 'active' : '' }}">
-      <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-      </li>
-    @endforeach
-
-      @if ($users->hasMorePages())
-      <li class="page-item">
-      <a class="page-link" href="{{ $users->nextPageUrl() }}">Next</a>
-      </li>
-    @else
-      <li class="page-item disabled"><span class="page-link">Next</span></li>
-    @endif
-    </ul>
-    </nav>
-
     </div>
 @endsection

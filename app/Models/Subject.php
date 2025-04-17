@@ -18,4 +18,11 @@ class Subject extends Model
     {
         return $this->hasMany(TeacherAssignment::class, 'subjectID');
     }
+
+    public function subjectAssignment()
+    {
+        return $this->hasMany(SubjectAssignment::class, 'subjectID');
+    }
+
+    
 }

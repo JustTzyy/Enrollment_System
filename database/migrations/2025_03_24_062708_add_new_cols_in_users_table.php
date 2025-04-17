@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('contactNumber', 15);
             $table->enum('status', ['active', 'inactive', 'Grade 11', 'Grade 12', 'Highschool Graduate'])->default('active');
             $table->boolean('archive')->default(false);
+            $table->boolean('test')->default(false);
             $table->unsignedBigInteger(column: 'roleID');
             $table->timestamps();
             $table->softDeletes();

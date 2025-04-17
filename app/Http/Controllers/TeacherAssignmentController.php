@@ -22,8 +22,7 @@ class TeacherAssignmentController extends Controller
                 $search = $request->search;
         
                 $query->where(function ($q) use ($search) {
-                    $q->where('title', 'LIKE', "%{$search}%")
-                      ->orWhere('time', 'LIKE', "%{$search}%")
+                    $q->where('code', 'LIKE', "%{$search}%")
                       ->orWhere('id', 'LIKE', "%{$search}%")
                       ->orWhereHas('subject', function ($q) use ($search) {
                           $q->where('subject', 'LIKE', "%{$search}%");
@@ -42,7 +41,6 @@ class TeacherAssignmentController extends Controller
 
             return view('AdminComponents.teacherassignment', compact('assignments', 'users', 'subjects'));
         } catch (Exception $e) {
-            dd($e->getMessage());
             return redirect()->back()->with('error', 'Failed to load teacher assignments: ' . $e->getMessage());
         }
     }
@@ -50,13 +48,15 @@ class TeacherAssignmentController extends Controller
     public function store(StoreTeacherAssignmentRequest $request)
     {
         try {
-            TeacherAssignment::create([
-                'title' => $request->title,
-                'time' => $request->time,
+            $teacherAssignment = TeacherAssignment::create([
                 'subjectID' => $request->subjectID,
                 'userID' => $request->userID,
             ]);
-
+    
+            $teacherAssignment->update([
+                'code' => 'teach' . $teacherAssignment->id,
+            ]);
+    
             return redirect()->back()->with('success', 'Teacher assignment created successfully!');
         } catch (QueryException $e) {
             return redirect()->back()->with('error', 'Database error: ' . $e->getMessage());
@@ -64,14 +64,13 @@ class TeacherAssignmentController extends Controller
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
+    
 
     public function update(StoreTeacherAssignmentRequest $request, $id)
     {
         try {
             $assignment = TeacherAssignment::findOrFail($id);
             $assignment->update([
-                'title' => $request->title,
-                'time' => $request->time,
                 'subjectID' => $request->subjectID,
                 'userID' => $request->userID,
             ]);

@@ -20,4 +20,9 @@ class Strand extends Model
     {
         return $this->hasMany(Section::class, 'strandID');
     }
+
+    public function subjectAssignment()
+    {
+        return $this->hasMany(SubjectAssignment::class, 'strandID');
+    }
 }

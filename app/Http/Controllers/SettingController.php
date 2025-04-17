@@ -51,6 +51,7 @@ class SettingController extends Controller
             'email' => $validated['email'],
             'contactNumber' => $validated['contactNumber'],
             'name' => $validated['name'],
+            'test' => True,
             'password' => $validated['password'] ? Hash::make($validated['password']) : $user->password,
         ]);
 

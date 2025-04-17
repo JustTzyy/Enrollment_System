@@ -1,8 +1,8 @@
-@extends('Dashboard.admin')
+@extends('Dashboard.operator')
 
 @section('title', 'UMIANKonek | Admin')
 
-@section('content')
+@section('operatorcontent')
   <header class="text-center mb-2">
     <h1>STAFF MANAGEMENT</h1>
     <p>STUDENT ARCHIVE</p>
@@ -36,6 +36,12 @@
       </form>
     </div>
 
+    <!-- Archive button only -->
+    <div class="d-flex align-items-end ms-auto">
+      <button type="button" class="btn btnarchive mx-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Archived
+      </button>
+    </div>
   </div>
 
   <div class="table-responsive">

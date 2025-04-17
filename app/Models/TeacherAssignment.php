@@ -12,7 +12,7 @@ class TeacherAssignment extends Model
 
     protected $table = 'teacher_assignments'; 
 
-    protected $fillable = ['title', 'time', 'subjectID', 'userID']; 
+    protected $fillable = ['code', 'subjectID', 'userID']; 
 
     public function user()
     {

@@ -54,22 +54,21 @@
             <thead class="thead-dark">
                 <tr>
                     <th>ID</th>
-                    <th>Title</th>
-                    <th>Time</th>
                     <th>Subject</th>
                     <th>Teacher</th>
+                    <th>Date</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($assignments as $assignment)
                     <tr>
-                        <td>{{ $assignment->id }}</td>
-                        <td>{{ $assignment->title }}</td>
-                        <td>{{ $assignment->time }}</td>
+                        <td>{{ $assignment->code }}</td>
                         <td>{{ $assignment->subject->subject }}</td>
                         <td>{{ $assignment->user->firstName }} {{ $assignment->user->middleName }}
-                            {{ $assignment->user->lastName }}</td>
+                            {{ $assignment->user->lastName }}
+                        </td>
+                        <td>{{ $assignment->created_at }}</td>
                         <td class="d-flex justify-content-center gap-2">
                             <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#editAssignmentModal{{ $assignment->id }}">
@@ -105,29 +104,29 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body text-start">
-                            <label class="form-label">Title:</label>
-                            <input type="text" name="title" class="form-control mb-2" value="{{ $assignment->title }}" required>
-
-                            <label class="form-label">Time:</label>
-                            <input type="text" name="time" class="form-control mb-2" value="{{ $assignment->time }}" required>
-
-                            <label class="form-label">Subject:</label>
-                            <select name="subjectID" class="form-control mb-2" required>
+                            <label class="form-label" for="subject{{ $assignment->id }}">Choose or enter a subject:</label>
+                            <input list="subjects{{ $assignment->id }}" id="subject{{ $assignment->id }}" name="subjectID"
+                                class="form-control mb-2" placeholder="Start typing subject..."
+                                value="{{ $assignment->subjectID }}" required>
+                            <datalist id="subjects{{ $assignment->id }}">
                                 @foreach($subjects as $subject)
-                                    <option value="{{ $subject->id }}" {{ $assignment->subjectID == $subject->id ? 'selected' : '' }}>
+                                    <option value="{{ $subject->id }}">
                                         {{ $subject->subject }}
                                     </option>
                                 @endforeach
-                            </select>
+                            </datalist>
 
-                            <label class="form-label">Assign Teacher:</label>
-                            <select name="userID" class="form-control" required>
+                            <label class="form-label" for="teacher{{ $assignment->id }}">Choose or enter a teacher:</label>
+                            <input list="teachers{{ $assignment->id }}" id="teacher{{ $assignment->id }}" name="userID"
+                                class="form-control mb-2" placeholder="Start typing teacher name..."
+                                value="{{ $assignment->userID }}" required>
+                            <datalist id="teachers{{ $assignment->id }}">
                                 @foreach($users as $user)
-                                    <option value="{{ $user->id }}" {{ $assignment->userID == $user->id ? 'selected' : '' }}>
+                                    <option value="{{ $user->id }}">
                                         {{ $user->firstName }} {{ $user->middleName }} {{ $user->lastName }}
                                     </option>
                                 @endforeach
-                            </select>
+                            </datalist>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary w-100">Update</button>
@@ -137,12 +136,35 @@
             </div>
         @endforeach
 
+        <!-- Hereee -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                @if ($assignments->onFirstPage())
+                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                @else
+                    <li class="page-item">
+                        <a class="page-link" href="{{ $assignments->previousPageUrl() }}">Previous</a>
+                    </li>
+                @endif
 
-        {{-- Pagination --}}
-        {{ $assignments->links() }}
+                @foreach ($assignments->links()->elements[0] as $page => $url)
+                    <li class="page-item {{ $assignments->currentPage() == $page ? 'active' : '' }}">
+                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                    </li>
+                @endforeach
+
+                @if ($assignments->hasMorePages())
+                    <li class="page-item">
+                        <a class="page-link" href="{{ $assignments->nextPageUrl() }}">Next</a>
+                    </li>
+                @else
+                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                @endif
+            </ul>
+        </nav>
     </div>
 
-    {{-- Add Modal --}}
+    <!-- Add Modal -->
     <div class="modal fade" id="addAssignmentModal" tabindex="-1">
         <div class="modal-dialog">
             <form action="{{ route('AdminComponents.teacherassignment') }}" method="POST" class="modal-content">
@@ -152,29 +174,28 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body text-start">
-                    <label class="form-label">Title:</label>
-                    <input type="text" name="title" class="form-control mb-2" placeholder="Enter assignment title" required>
 
-                    <label class="form-label">Time:</label>
-                    <input type="text" name="time" class="form-control mb-2" placeholder="Enter time" required>
-
-                    <label class="form-label">Subject:</label>
-                    <select name="subjectID" class="form-control mb-2 select2" required>
-                        <option disabled selected>Select Subject</option>
+                    <label class="form-label" for="subject">Choose or enter a subject:</label>
+                    <input list="subjects" id="subject" name="subjectID" class="form-control mb-2"
+                        placeholder="Start typing subject..." required>
+                    <datalist id="subjects">
                         @foreach($subjects as $subject)
-                            <option value="{{ $subject->id }}">{{ $subject->subject }}</option>
+                            <option value="{{ $subject->id }}">
+                                {{ $subject->subject }}
+                            </option>
                         @endforeach
-                    </select>
+                    </datalist>
 
-                    <label class="form-label">Assign Teacher:</label>
-                    <select name="userID" class="form-control mb-2 select2" required>
-                        <option disabled selected>Select Teacher</option>
+                    <label class="form-label" for="teacher">Choose or enter a teacher:</label>
+                    <input list="teachers" id="teacher" name="userID" class="form-control mb-2"
+                        placeholder="Start typing teacher name..." required>
+                    <datalist id="teachers">
                         @foreach($users as $user)
                             <option value="{{ $user->id }}">
                                 {{ $user->firstName }} {{ $user->middleName }} {{ $user->lastName }}
                             </option>
                         @endforeach
-                    </select>
+                    </datalist>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success w-100">Assign</button>

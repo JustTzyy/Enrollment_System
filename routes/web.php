@@ -5,6 +5,7 @@ use App\Http\Controllers\RequirementController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StrandController;
+use App\Http\Controllers\SubjectAssignmentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherAssignmentController;
 use App\Http\Controllers\UserController;
@@ -102,7 +103,11 @@ Route::prefix('AdminComponents')->middleware('auth')->group(function () {
     Route::get('/archive', [ArchiveController::class, 'student'])->name('AdminComponents.archive');
     Route::post('/archive/{id}/archive', [ArchiveController::class, 'archive'])->name('archive.archive');
 
-
+    // Subject Assignment CRUD
+    Route::get('/subjectassignment', [SubjectAssignmentController::class, 'subjectAssignment'])->name('AdminComponents.subjectassignment');
+    Route::post('/subjectassignment', [SubjectAssignmentController::class, 'store'])->name('AdminComponents.subjectassignment.post');
+    Route::post('/subjectassignment/update/{id}', [SubjectAssignmentController::class, 'update'])->name('subjectassignment.update');
+    Route::delete('/subjectassignment/delete/{id}', [SubjectAssignmentController::class, 'destroy'])->name('subjectassignment.destroy');
 
 });
 
@@ -115,7 +120,7 @@ Route::prefix('Dashboard')->middleware('auth')->group(function () {
     Route::get('/admin', [AuthController::class, 'adminDashboard'])->name('AdminComponents.dashboard');
     Route::get('/teacher', [AuthController::class, 'teacherDashboard']);
     Route::get('/student', [AuthController::class, 'studentDashboard']);
-    Route::get('/operator', [AuthController::class, 'operatorDashboard']);
+    Route::get('/operator', [AuthController::class, 'operatorDashboard'])->name('OperatorComponents.dashboard');
 
 });
 
@@ -123,10 +128,33 @@ Route::get('/AdminComponents/enrollmenthistory', function () {
     return view('AdminComponents.enrollmenthistory');
 })->name('AdminComponents.enrollmenthistory');
 
+Route::prefix('OperatorComponents')->group(function () {
 
-Route::get('/AdminComponents/staffarchive', function () {
-    return view('AdminComponents.staffarchive');
-})->name('AdminComponents.staffarchive');
+    // Enrollment Route
+    Route::get('/enrollment', function () {
+        return view('OperatorComponents.enrollment');
+    })->name('OperatorComponents.enrollment');
+
+    // Enrollment History Route
+    Route::get('/enrollmenthistory', function () {
+        return view('OperatorComponents.enrollmenthistory');
+    })->name('OperatorComponents.enrollmenthistory');
+
+    // Requirements Route
+    Route::get('/requirement', [RequirementController::class, 'requirement'])->name('OperatorComponents.requirement');
+
+    // Schedule Route
+    Route::get('/schedule', function () {
+        return view('OperatorComponents.schedule');
+    })->name('OperatorComponents.schedule');
+
+    // Student History Route
+    Route::get('/studenthistory', [UserHistoryController::class, 'student'])->name('OperatorComponents.studenthistory');
+
+    // Archive Route
+    Route::get('/archive', [ArchiveController::class, 'student'])->name('OperatorComponents.archive');
+    Route::post('/archive/{id}/archive', [ArchiveController::class, 'archive'])->name('OperatorComponents.archive.archive');
+});
 
 
 

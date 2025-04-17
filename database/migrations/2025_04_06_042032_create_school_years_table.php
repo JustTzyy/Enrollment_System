@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('yearStart');
             $table->string('yearEnd');
-            $table->string('status')->default('inactive');
+            $table->string('status')->default('active');
             $table->timestamps();
             $table->softDeletes();
         });

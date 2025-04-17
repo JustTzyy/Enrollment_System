@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SchoolYear;
 use App\Models\Section;
+use Cookie;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -23,6 +24,8 @@ class AuthController extends Controller
             Auth::login($user);
 
             if ($user->roleID == 1) {
+                Cookie::queue('username', $user->name, 60); 
+
                 return redirect('/Dashboard/admin');
             } elseif ($user->roleID == 2) {
                 return redirect('/Dashboard/teacher');
@@ -45,7 +48,9 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect('/Authentication/login')->with('success', 'You have been logged out.');
+        $forgetCookie = \Cookie::forget('username');
+
+        return redirect('/Authentication/login')->with('success', 'You have been logged out.')->withCookie($forgetCookie);
     }
 
     public function adminDashboard()
@@ -70,7 +75,12 @@ class AuthController extends Controller
     }
 
     public function operatorDashboard()
+
     {
-        return view('dashboard.operator');
+        $activeYear = SchoolYear::where('status', 'active')->first();
+        $studentCount = User::where('roleID', 3)->count();
+        $section = Section::get()->count();
+
+        return view('OperatorComponents.dashboard', compact('activeYear', 'studentCount', 'section'));
     }
 }
