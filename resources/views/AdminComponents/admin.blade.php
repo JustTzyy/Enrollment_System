@@ -45,9 +45,6 @@
     <button type="button" class="btn btncustom mx-2" data-bs-toggle="modal" data-bs-target="#addUserModal">
       Add Admin
     </button>
-    <button type="button" class="btn btnarchive mx-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
-      Archived
-    </button>
     </div>
   </div>
 

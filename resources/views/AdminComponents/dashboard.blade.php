@@ -5,12 +5,19 @@
 @section('content')
     <header>
         <h1 class="d-flex justify-content-center align-text-center ">Welcome, {{ Cookie::get('username') }}!</h1>
-        <p class="d-flex justify-content-center align-text-center ">SY: @if($activeYear)
-            {{ $activeYear->yearStart }}-{{ $activeYear->yearEnd }}
-        @else
-            No active year
-        @endif
-        </p>
+        <form method="GET" action="{{ route('AdminComponents.dashboard') }}">
+    <div class="d-flex justify-content-center align-items-center">
+        <label for="schoolYear" class="me-2">SY:</label>
+        <select name="schoolYear" id="schoolYear" class="form-select w-auto" onchange="this.form.submit()">
+            @foreach($schoolYears as $year)
+                <option value="{{ $year->id }}"
+                    @if($activeYear && $activeYear->id == $year->id) selected @endif>
+                    {{ $year->yearStart }} - {{ $year->yearEnd }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+</form>
     </header>
     <div class="dashboard-container">
         <div class="dashboard-cards_box">

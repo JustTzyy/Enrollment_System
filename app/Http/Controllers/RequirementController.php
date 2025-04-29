@@ -18,16 +18,11 @@ class RequirementController extends Controller
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('id', 'LIKE', "%{$search}%")
+                $q->where('id', 'LIKE', "{$search}")
                     ->orWhere('firstName', 'LIKE', "%{$search}%")
                     ->orWhere('lastName', 'LIKE', "%{$search}%")
-                    ->orWhere('email', 'LIKE', "{$search}")
-                    ->orWhereHas('address', function ($q) use ($search) {
-                        $q->where('street', 'LIKE', "%{$search}%")
-                            ->orWhere('city', 'LIKE', "%{$search}%")
-                            ->orWhere('province', 'LIKE', "%{$search}%");
-
-                    });
+                    ->orWhere('email', 'LIKE', "{$search}");
+                   
             });
         }
 

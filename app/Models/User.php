@@ -13,7 +13,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes;
 
-    protected $fillable = ['firstName','middleName','lastName','age','birthday','gender','contactNumber','status','email','name','password','archive','test','roleID'];
+    protected $fillable = ['firstName', 'middleName', 'lastName', 'age', 'birthday', 'gender', 'contactNumber', 'status', 'email', 'name', 'password', 'archive', 'test', 'roleID'];
 
     protected $hidden = [
         'password',
@@ -64,6 +64,16 @@ class User extends Authenticatable
     public function requirements()
     {
         return $this->belongsToMany(Requirement::class, 'student_requirements', 'userID', 'requirementID');
+    }
+
+    public function schedule()
+    {
+        return $this->hasMany(Schedule::class, 'userID');
+    }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class, 'userID');
     }
 
 }

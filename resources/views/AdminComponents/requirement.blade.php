@@ -44,7 +44,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($users as $user)
+                @forelse($users as $user)
                     <tr>
                         <th scope="row">{{ $user->id }}</th>
                         <td>{{ $user->firstName }} {{ $user->lastName }}</td>
@@ -60,7 +60,11 @@
                             </td>
                         @endforeach
                     </tr>
-                @endforeach
+@empty
+                    <tr>
+      <td colspan="9">No Student available</td>
+      </tr>
+                @endforelse
             </tbody>
         </table>
         <!-- Hereee -->

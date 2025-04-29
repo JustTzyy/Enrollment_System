@@ -15,10 +15,17 @@ class SubjectAssignment extends Model
 
     public function strand()
     {
-        return $this->belongsTo(Strand::class,  'strandID');
+        return $this->belongsTo(Strand::class, 'strandID');
     }
     public function subject()
     {
         return $this->belongsTo(Subject::class, 'subjectID');
     }
+
+    // In SubjectAssignment.php model
+    public function schedule()
+    {
+        return $this->hasMany(Schedule::class, 'subjectAssignmentID');
+    }
+
 }

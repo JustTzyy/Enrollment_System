@@ -25,4 +25,9 @@ class Strand extends Model
     {
         return $this->hasMany(SubjectAssignment::class, 'strandID');
     }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class, 'strandID');
+    }
 }

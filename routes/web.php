@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\ArchiveController;
+use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\RequirementController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StrandController;
@@ -18,7 +20,7 @@ use App\Http\Controllers\SettingController;
 
 //Tan awon nato kong ma change sa git
 Route::get('/', function () {
-    return view('welcome');
+    return view('Authentication.login');
 });
 
 
@@ -108,6 +110,23 @@ Route::prefix('AdminComponents')->middleware('auth')->group(function () {
     Route::post('/subjectassignment', [SubjectAssignmentController::class, 'store'])->name('AdminComponents.subjectassignment.post');
     Route::post('/subjectassignment/update/{id}', [SubjectAssignmentController::class, 'update'])->name('subjectassignment.update');
     Route::delete('/subjectassignment/delete/{id}', [SubjectAssignmentController::class, 'destroy'])->name('subjectassignment.destroy');
+
+    // Section CRUD Routes
+    Route::get('/schedule', [ScheduleController::class, 'section'])->name('AdminComponents.schedule');
+    Route::post('/schedule', [ScheduleController::class, 'store'])->name('AdminComponents.section.post');
+    Route::post('/schedule/update/{id}', [ScheduleController::class, 'update'])->name('section.update');
+    Route::post('/admin/sections/{id}/generate-schedule', [ScheduleController::class, 'generate'])->name('section.generateSchedule');
+    Route::put('/schedule/update-teacher/{id}', [ScheduleController::class, 'updateTeacher'])->name('schedule.updateTeacher');
+
+    // Enrollment CRUD
+    Route::get('/enrollment', [EnrollmentController::class, 'enrollment'])->name('AdminComponents.enrollment');
+    Route::post('/enrollment', [EnrollmentController::class, 'store'])->name('AdminComponents.enrollment.post');
+    Route::post('/enrollment/update/{id}', [EnrollmentController::class, 'update'])->name('enrollment.update');
+    Route::delete('/enrollment/delete/{id}', [EnrollmentController::class, 'destroy'])->name('enrollment.destroy');
+    Route::get('/get-sections-by-strand-and-grade', [EnrollmentController::class, 'getSectionsByStrandAndGrade'])->name('get.sections.by.strand.and.grade');
+
+
+
 
 });
 

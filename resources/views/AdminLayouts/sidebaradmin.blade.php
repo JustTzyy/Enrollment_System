@@ -30,6 +30,21 @@
         <li>
             <div class="dropdown">
                 <a class="d-flex dropdownhover justify-content-between align-items-center dropdown-toggle sidebar-link"
+                    href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-active="transaction">
+                    <span><i class="fa-solid fa-sliders"></i> Transaction</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item sidebar-sublink" href="{{ route('AdminComponents.enrollment') }}"
+                            data-parent="transaction" data-active="Enrollment">Enrollment</a></li>
+                    <li><a class="dropdown-item sidebar-sublink" href="{{ route('AdminComponents.schedule') }}"
+                            data-parent="transaction" data-active="Schedule">Schedule</a></li>
+                </ul>
+            </div>
+        </li>
+
+        <li>
+            <div class="dropdown">
+                <a class="d-flex dropdownhover justify-content-between align-items-center dropdown-toggle sidebar-link"
                     href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-active="curriculum">
                     <span><i class="fa-solid fa-sliders"></i> Year & Curriculum</span>
                 </a>

@@ -50,124 +50,270 @@
 
     {{-- Table --}}
     <div class="table-responsive mt-3">
-        <table class="table custom-table">
-            <thead class="thead-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Subject</th>
-                    <th>Teacher</th>
-                    <th>Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($assignments as $assignment)
-                    <tr>
-                        <td>{{ $assignment->code }}</td>
-                        <td>{{ $assignment->subject->subject }}</td>
-                        <td>{{ $assignment->user->firstName }} {{ $assignment->user->middleName }}
-                            {{ $assignment->user->lastName }}
-                        </td>
-                        <td>{{ $assignment->created_at }}</td>
-                        <td class="d-flex justify-content-center gap-2">
-                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#editAssignmentModal{{ $assignment->id }}">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-                            <form action="{{ route('teacherassignment.destroy', $assignment->id) }}" method="POST"
-                                onsubmit="return confirm('Delete this assignment?');">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
+    @php
+    // Group this page’s assignments by userID, so each teacher appears once
+    $assignmentsByUser = $assignments->groupBy('userID');
+@endphp
 
+<table class="table custom-table">
+    <thead class="thead-dark">
+        <tr>
+            <th>Teacher</th>
+            <th># Subjects</th>
+            <th>Details</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse ($assignmentsByUser as $userId => $userAssignments)
+            @php 
+                $teacher = $userAssignments->first()->user;
+                $firstAssignment = $userAssignments->first();
+            @endphp
+            <tr>
+                <td>
+                  {{ $teacher->firstName }}
+                  {{ $teacher->middleName }}
+                  {{ $teacher->lastName }}
+                </td>
+                <td>{{ $userAssignments->count() }}</td>
+                <td>
+                    <button class="btn btn-info btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#userDetailsModal{{ $userId }}">
+                        See More
+                    </button>
+                </td>
+                <td class="d-flex justify-content-center gap-2">
+                    {{-- Edit the **first** assignment for this teacher --}}
+                    <button class="btn btn-primary btn-sm"
+        onclick="if(confirm('Update this assignment?')) {
+                   var myModal = new bootstrap.Modal(document.getElementById('editSubjectsModal{{ $userId }}'));
+                   myModal.show();
+                 }">
+  <i class="fa-solid fa-pen"></i>
+</button>
 
-
-                @empty
-                    <tr>
-                        <td colspan="6">No teacher assignments available.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-
-        @foreach($assignments as $assignment)
-            <div class="modal fade" id="editAssignmentModal{{ $assignment->id }}" tabindex="-1">
-                <div class="modal-dialog">
-                    <form action="{{ route('teacherassignment.update', $assignment->id) }}" method="POST" class="modal-content">
-                        @csrf
-                        <div class="modal-header">
-                            <h5 class="modal-title">Edit Assignment</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body text-start">
-                            <label class="form-label" for="subject{{ $assignment->id }}">Choose or enter a subject:</label>
-                            <input list="subjects{{ $assignment->id }}" id="subject{{ $assignment->id }}" name="subjectID"
-                                class="form-control mb-2" placeholder="Start typing subject..."
-                                value="{{ $assignment->subjectID }}" required>
-                            <datalist id="subjects{{ $assignment->id }}">
-                                @foreach($subjects as $subject)
-                                    <option value="{{ $subject->id }}">
-                                        {{ $subject->subject }}
-                                    </option>
-                                @endforeach
-                            </datalist>
-
-                            <label class="form-label" for="teacher{{ $assignment->id }}">Choose or enter a teacher:</label>
-                            <input list="teachers{{ $assignment->id }}" id="teacher{{ $assignment->id }}" name="userID"
-                                class="form-control mb-2" placeholder="Start typing teacher name..."
-                                value="{{ $assignment->userID }}" required>
-                            <datalist id="teachers{{ $assignment->id }}">
-                                @foreach($users as $user)
-                                    <option value="{{ $user->id }}">
-                                        {{ $user->firstName }} {{ $user->middleName }} {{ $user->lastName }}
-                                    </option>
-                                @endforeach
-                            </datalist>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary w-100">Update</button>
-                        </div>
+                    <form action="{{ route('teacherassignment.destroy', $firstAssignment->id) }}"
+                          method="POST"
+                          onsubmit="return confirm('Delete this assignment?');">
+                        @csrf @method('DELETE')
+                        <button class="btn btn-danger btn-sm">
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
                     </form>
-                </div>
-            </div>
+                </td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="4">No teacher assignments available.</td>
+            </tr>
+        @endforelse
+    </tbody>
+</table>
+
+@php
+  // group assignments by teacher so we can edit per‐teacher
+  $assignmentsByUser = $assignments->groupBy('userID');
+@endphp
+
+@foreach($assignmentsByUser as $userId => $userAssignments)
+  @php $teacher = $userAssignments->first()->user; @endphp
+
+  <!-- Edit Subjects Modal -->
+  <div class="modal fade" id="editSubjectsModal{{ $userId }}" tabindex="-1">
+    <div class="modal-dialog">
+      <form action="{{ route('teacherassignment.update', $userId) }}" 
+            method="POST" 
+            class="modal-content"
+            onsubmit="return validateSubjectEdit{{ $userId }}()">
+        @csrf
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Subjects for {{ $teacher->firstName }} {{ $teacher->lastName }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-start">
+          <!-- Subject Input -->
+          <label for="subjectInput{{ $userId }}" class="form-label">
+            Choose or enter subjects:
+          </label>
+          <input list="subjectOptions{{ $userId }}"
+                 id="subjectInput{{ $userId }}"
+                 class="form-control mb-2"
+                 placeholder="Type a subject and press Enter or Comma">
+          <datalist id="subjectOptions{{ $userId }}">
+            @foreach($subjects as $subject)
+              <option data-id="{{ $subject->id }}" value="{{ $subject->subject }}"></option>
+            @endforeach
+          </datalist>
+
+          <div id="selectedSubjects{{ $userId }}" class="mb-2 d-flex flex-wrap gap-2">
+            @foreach($userAssignments as $ua)
+              <span class="badge bg-primary d-flex align-items-center gap-1 px-2 py-1">
+                {{ $ua->subject->subject }}
+                <button type="button" class="btn-close btn-close-white btn-sm ms-1" aria-label="Remove"></button>
+                <input type="hidden" name="subjectIDs[]" value="{{ $ua->subjectID }}">
+              </span>
+            @endforeach
+          </div>
+          <div id="subjectError{{ $userId }}" class="text-danger" style="display:none">
+            Please select at least one valid subject.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success w-100">Update Subjects</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      (function(){
+        const uid = "{{ $userId }}";
+        const input = document.getElementById("subjectInput"+uid);
+        const datalistOpts = document.querySelectorAll("#subjectOptions"+uid+" option");
+        const selectedContainer = document.getElementById("selectedSubjects"+uid);
+        const error = document.getElementById("subjectError"+uid);
+        const added = new Map();
+
+        // Initialize map with existing subjects
+        selectedContainer.querySelectorAll("input[type=hidden]").forEach(h => {
+          const subjName = h.parentNode.firstChild.textContent.trim();
+          added.set(subjName, h.value);
+        });
+
+        // Remove badge handler
+        selectedContainer.addEventListener("click", e => {
+          if (e.target.matches(".btn-close")) {
+            const badge = e.target.closest("spanBadge");
+            const h = badge.querySelector("input[type=hidden]");
+            added.delete(h.value);
+            badge.remove();
+          }
+        });
+
+        // Add new subjects on Enter or Comma
+        input.addEventListener("keydown", e => {
+          if (e.key === "Enter" || e.key === ",") {
+            e.preventDefault();
+            const val = input.value.trim();
+            input.value = "";
+            if (!val || added.has(val)) return;
+
+            let match = false;
+            datalistOpts.forEach(opt => {
+              if (opt.value === val) {
+                match = true;
+                const id = opt.getAttribute("data-id");
+                added.set(val, id);
+
+                const badge = document.createElement("span");
+                badge.className = "badge bg-primary d-flex align-items-center gap-1 px-2 py-1";
+                badge.innerHTML = `
+                  ${val}
+                  <button type="button" class="btn-close btn-close-white btn-sm ms-1" aria-label="Remove"></button>
+                  <input type="hidden" name="subjectIDs[]" value="${id}">
+                `;
+                // handle remove
+                badge.querySelector("button").addEventListener("click", () => {
+                  added.delete(val);
+                  badge.remove();
+                });
+
+                selectedContainer.appendChild(badge);
+              }
+            });
+
+            if (!match) alert(`Subject "${val}" not recognized.`);
+          }
+        });
+
+        // Form validation
+        window["validateSubjectEdit"+uid] = function() {
+          if (added.size === 0) {
+            error.style.display = "block";
+            return false;
+          }
+          return true;
+        };
+      })();
+    });
+  </script>
+@endforeach
+
+
+{{-- One “See More” modal per teacher, listing ALL their subjects --}}
+@foreach($assignmentsByUser as $userId => $userAssignments)
+  @php $teacher = $userAssignments->first()->user; @endphp
+  <div class="modal fade" id="userDetailsModal{{ $userId }}" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            Subjects for {{ $teacher->firstName }} {{ $teacher->lastName }}
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          @if($userAssignments->isEmpty())
+            <p><em>No assignments found.</em></p>
+          @else
+            <ul class="list-group">
+              @foreach($userAssignments as $ua)
+                <li class="list-group-item">
+                  <strong>{{ optional($ua->subject)->subject ?? '—' }}</strong>
+                  (Code: {{ $ua->code }})<br>
+                  Assigned on: {{ $ua->created_at->format('F j, Y') }}
+                </li>
+              @endforeach
+            </ul>
+          @endif
+        </div>
+      </div>
+    </div>
+  </div>
+@endforeach
+
+
+
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <!-- Previous Page Link -->
+        @if ($users->onFirstPage())
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+        @else
+            <li class="page-item">
+                <a class="page-link" href="{{ $users->previousPageUrl() }}">Previous</a>
+            </li>
+        @endif
+
+        <!-- Page Number Links -->
+        @foreach ($users->links()->elements[0] as $page => $url)
+            <li class="page-item {{ $users->currentPage() == $page ? 'active' : '' }}">
+                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+            </li>
         @endforeach
 
-        <!-- Hereee -->
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                @if ($assignments->onFirstPage())
-                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
-                @else
-                    <li class="page-item">
-                        <a class="page-link" href="{{ $assignments->previousPageUrl() }}">Previous</a>
-                    </li>
-                @endif
+        <!-- Next Page Link -->
+        @if ($users->hasMorePages())
+            <li class="page-item">
+                <a class="page-link" href="{{ $users->nextPageUrl() }}">Next</a>
+            </li>
+        @else
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+        @endif
+    </ul>
+</nav>
 
-                @foreach ($assignments->links()->elements[0] as $page => $url)
-                    <li class="page-item {{ $assignments->currentPage() == $page ? 'active' : '' }}">
-                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                    </li>
-                @endforeach
-
-                @if ($assignments->hasMorePages())
-                    <li class="page-item">
-                        <a class="page-link" href="{{ $assignments->nextPageUrl() }}">Next</a>
-                    </li>
-                @else
-                    <li class="page-item disabled"><span class="page-link">Next</span></li>
-                @endif
-            </ul>
-        </nav>
     </div>
 
     <!-- Add Modal -->
     <div class="modal fade" id="addAssignmentModal" tabindex="-1">
         <div class="modal-dialog">
-            <form action="{{ route('AdminComponents.teacherassignment') }}" method="POST" class="modal-content">
+            <form action="{{ route('AdminComponents.teacherassignment') }}" method="POST" class="modal-content"
+                onsubmit="return validateSubjectSelection()">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">New Teacher Assignment</h5>
@@ -175,27 +321,147 @@
                 </div>
                 <div class="modal-body text-start">
 
-                    <label class="form-label" for="subject">Choose or enter a subject:</label>
-                    <input list="subjects" id="subject" name="subjectID" class="form-control mb-2"
-                        placeholder="Start typing subject..." required>
-                    <datalist id="subjects">
+                    <!-- Subject Input -->
+                    <label class="form-label" for="subjectInput">Choose or enter subjects:</label>
+                    <input list="subjectOptions" id="subjectInput" class="form-control mb-2"
+                        placeholder="Type a subject and press Enter or Comma">
+                    <datalist id="subjectOptions">
                         @foreach($subjects as $subject)
-                            <option value="{{ $subject->id }}">
-                                {{ $subject->subject }}
-                            </option>
+                            <option data-id="{{ $subject->id }}" value="{{ $subject->subject }}"></option>
+                        @endforeach
+                    </datalist>
+                    <div id="selectedSubjects" class="mb-2 d-flex flex-wrap gap-2"></div>
+                    <!-- Hidden inputs will be appended here -->
+                    <div id="subjectIDsContainer"></div>
+                    <div class="text-danger" id="subjectError" style="display: none;">Please select at least one valid
+                        subject.</div>
+
+                    <!-- Teacher Input -->
+                    <label class="form-label" for="teacherInput">Choose or enter a teacher:</label>
+                    <input list="teacherOptions" id="teacherInput" class="form-control mb-2"
+                        placeholder="Start typing teacher name..." required>
+                    <input type="hidden" name="userID" id="teacherID">
+                    <datalist id="teacherOptions">
+                        @foreach($users2 as $user2)
+                            <option data-id="{{ $user2->id }}"
+                                value="{{ $user2->firstName }} {{ $user2->middleName }} {{ $user2->lastName }}"></option>
                         @endforeach
                     </datalist>
 
-                    <label class="form-label" for="teacher">Choose or enter a teacher:</label>
-                    <input list="teachers" id="teacher" name="userID" class="form-control mb-2"
-                        placeholder="Start typing teacher name..." required>
-                    <datalist id="teachers">
-                        @foreach($users as $user)
-                            <option value="{{ $user->id }}">
-                                {{ $user->firstName }} {{ $user->middleName }} {{ $user->lastName }}
-                            </option>
-                        @endforeach
-                    </datalist>
+                    <!-- Script -->
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const subjectInput = document.getElementById("subjectInput");
+                            const subjectHidden = document.getElementById("subjectID");
+                            const subjectOptions = document.querySelectorAll("#subjectOptions option");
+
+                            const teacherInput = document.getElementById("teacherInput");
+                            const teacherHidden = document.getElementById("teacherID");
+                            const teacherOptions = document.querySelectorAll("#teacherOptions option");
+
+                            subjectInput.addEventListener("input", function () {
+                                subjectHidden.value = '';
+                                subjectOptions.forEach(option => {
+                                    if (option.value === subjectInput.value) {
+                                        subjectHidden.value = option.getAttribute("data-id");
+                                    }
+                                });
+                            });
+
+                            teacherInput.addEventListener("input", function () {
+                                teacherHidden.value = '';
+                                teacherOptions.forEach(option => {
+                                    if (option.value === teacherInput.value) {
+                                        teacherHidden.value = option.getAttribute("data-id");
+                                    }
+                                });
+                            });
+                        });
+
+                        document.addEventListener("DOMContentLoaded", () => {
+                            const subjectInput = document.getElementById("subjectInput");
+                            const subjectOptions = document.querySelectorAll("#subjectOptions option");
+                            const selectedContainer = document.getElementById("selectedSubjects");
+                            const subjectIDsContainer = document.getElementById("subjectIDsContainer");
+                            const subjectError = document.getElementById("subjectError");
+
+                            const addedSubjects = new Map(); // key: subjectName, value: subjectID
+
+                            subjectInput.addEventListener("keydown", function (e) {
+                                if (e.key === "Enter" || e.key === ",") {
+                                    e.preventDefault();
+                                    const inputVal = subjectInput.value.trim();
+                                    subjectInput.value = '';
+
+                                    if (inputVal === '' || addedSubjects.has(inputVal)) return;
+
+                                    let matched = false;
+                                    subjectOptions.forEach(option => {
+                                        if (option.value === inputVal) {
+                                            matched = true;
+                                            const id = option.getAttribute("data-id");
+                                            addedSubjects.set(inputVal, id);
+
+                                            const badge = document.createElement("span");
+                                            badge.className = "badge bg-primary d-flex align-items-center gap-1 px-2 py-1";
+                                            badge.innerHTML = `
+                                ${inputVal}
+                                <button type="button" class="btn-close btn-close-white btn-sm ms-1" aria-label="Remove"></button>
+                            `;
+
+                                            const hiddenInput = document.createElement("input");
+                                            hiddenInput.type = "hidden";
+                                            hiddenInput.name = "subjectIDs[]";
+                                            hiddenInput.value = id;
+                                            hiddenInput.setAttribute("data-subject", inputVal);
+
+                                            // Remove on close
+                                            badge.querySelector("button").addEventListener("click", () => {
+                                                badge.remove();
+                                                hiddenInput.remove();
+                                                addedSubjects.delete(inputVal);
+                                            });
+
+                                            selectedContainer.appendChild(badge);
+                                            subjectIDsContainer.appendChild(hiddenInput);
+                                        }
+                                    });
+
+                                    if (!matched) {
+                                        alert(`Subject "${inputVal}" is not recognized.`);
+                                    }
+                                }
+                            });
+
+                            // Teacher logic
+                            const teacherInput = document.getElementById("teacherInput");
+                            const teacherOptions = document.querySelectorAll("#teacherOptions option");
+                            const teacherHidden = document.getElementById("teacherID");
+
+                            teacherInput.addEventListener("input", function () {
+                                teacherHidden.value = '';
+                                teacherOptions.forEach(option => {
+                                    if (option.value === teacherInput.value) {
+                                        teacherHidden.value = option.getAttribute("data-id");
+                                    }
+                                });
+                            });
+                        });
+
+                        function validateSubjectSelection() {
+                            const subjectIDs = document.getElementsByName("subjectIDs[]");
+                            const error = document.getElementById("subjectError");
+
+                            if (subjectIDs.length === 0) {
+                                error.style.display = 'block';
+                                return false;
+                            }
+
+                            error.style.display = 'none';
+                            return true;
+                        }
+                    </script>
+
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success w-100">Assign</button>
@@ -203,6 +469,7 @@
             </form>
         </div>
     </div>
+
 
 
 

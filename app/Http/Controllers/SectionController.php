@@ -18,7 +18,7 @@ class SectionController extends Controller
 
             if ($request->has('search')) {
                 $search = $request->search;
-                $query->where('section', 'LIKE', "%{$search}%")
+                $query->where('section', 'LIKE', "{$search}%")
                     ->orWhere('id', 'LIKE', "{$search}");
             }
 

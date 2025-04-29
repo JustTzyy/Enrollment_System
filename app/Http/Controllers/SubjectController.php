@@ -18,8 +18,8 @@ class SubjectController extends Controller
             if ($request->has('search')) {
                 $search = $request->search;
                 $query->where('subject', 'LIKE', "%{$search}%")
-                      ->orWhere('id', 'LIKE', "{search}")
-                      ->orWhere('type', 'LIKE', '{search}');
+                      ->orWhere('id', 'LIKE', "{$search}")
+                      ->orWhere('type', 'LIKE', "%{$search}");
             }
 
     

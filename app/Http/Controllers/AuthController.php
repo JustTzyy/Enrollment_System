@@ -53,15 +53,22 @@ class AuthController extends Controller
         return redirect('/Authentication/login')->with('success', 'You have been logged out.')->withCookie($forgetCookie);
     }
 
-    public function adminDashboard()
+    public function adminDashboard(Request $request)
     {
-        $activeYear = SchoolYear::where('status', 'active')->first();
+        $selectedYearID = $request->input('schoolYear');
+    
+        // If a specific year is selected, get it; otherwise get the active year
+        if ($selectedYearID) {
+            $activeYear = SchoolYear::find($selectedYearID);
+        } else {
+            $activeYear = SchoolYear::where('status', 'active')->first();
+        }
+    
+        $schoolYears = SchoolYear::orderByDesc('yearStart')->get();
         $studentCount = User::where('roleID', 3)->count();
-        $section = Section::get()->count();
-
-        return view('AdminComponents.dashboard', compact('activeYear', 'studentCount', 'section'));
-
-
+        $section = Section::count();
+    
+        return view('AdminComponents.dashboard', compact('activeYear', 'schoolYears', 'studentCount', 'section'));
     }
 
     public function teacherDashboard()

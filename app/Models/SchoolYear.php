@@ -14,4 +14,8 @@ class SchoolYear extends Model
 
     protected $fillable = ['yearStart', 'yearEnd', 'status']; 
 
+    public function enrollments() {
+        return $this->hasMany(Enrollment::class, 'schoolYearID');
+    }
+
 }

@@ -23,5 +23,10 @@ class TeacherAssignment extends Model
         return $this->belongsTo(Subject::class, 'subjectID');
     }
 
+    public function subjectAssignment()
+{
+    return $this->belongsTo(SubjectAssignment::class, 'subjectAssignmentID');  // adjust the foreign key if needed
+}
+
 
 }
