@@ -144,11 +144,11 @@ class ScheduleController extends Controller
         try {
             $section = Section::findOrFail($id);
 
-            // Check if this section is already scheduled
-            if (Schedule::where('sectionID', $section->id)->exists()) {
+                // Check if this section is already scheduled
+                if (Schedule::where('sectionID', $section->id)->exists()) {
 
-                return back()->with('error', 'This section is already scheduled.');
-            }
+                    return back()->with('error', 'This section is already scheduled.');
+                }
 
             $subjects = SubjectAssignment::where([
                 'strandID' => $section->strandID,

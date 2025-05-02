@@ -9,7 +9,9 @@ class Enrollment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['gradeLevel','userID','schoolYearID','sectionID','strandID' ];
+    protected $table = 'enrollments';
+
+    protected $fillable = ['gradeLevel','userID','schoolYearID','sectionID','strandID', 'semester' ];
 
     public function user() {
         return $this->belongsTo(User::class, 'userID');

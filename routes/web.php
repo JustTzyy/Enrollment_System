@@ -61,6 +61,8 @@ Route::prefix('AdminComponents')->middleware('auth')->group(function () {
     Route::get('/operatorhistory', action: [UserHistoryController::class, 'operator'])->name('AdminComponents.operatorhistory');
     Route::get('/teacherhistory', action: [UserHistoryController::class, 'teacher'])->name('AdminComponents.teacherhistory');
     Route::get('/studenthistory', action: [UserHistoryController::class, 'student'])->name('AdminComponents.studenthistory');
+    Route::get('/enrollmenthistory', action: [UserHistoryController::class, 'enrollment'])->name('AdminComponents.enrollmenthistory');
+
 
     //Strand Crud
     Route::get('/strand', action: [StrandController::class, 'strand'])->name('AdminComponents.strand');
@@ -113,10 +115,10 @@ Route::prefix('AdminComponents')->middleware('auth')->group(function () {
 
     // Section CRUD Routes
     Route::get('/schedule', [ScheduleController::class, 'section'])->name('AdminComponents.schedule');
-    Route::post('/schedule', [ScheduleController::class, 'store'])->name('AdminComponents.section.post');
-    Route::post('/schedule/update/{id}', [ScheduleController::class, 'update'])->name('section.update');
+    Route::post('/schedule', [ScheduleController::class, 'store'])->name('AdminComponents.schedule.post');
+    Route::post('/schedule/update/{id}', [ScheduleController::class, 'update'])->name('schedule.update');
     Route::post('/admin/sections/{id}/generate-schedule', [ScheduleController::class, 'generate'])->name('section.generateSchedule');
-    Route::put('/schedule/update-teacher/{id}', [ScheduleController::class, 'updateTeacher'])->name('schedule.updateTeacher');
+    Route::put('/schedule/update-teacher/{id}', [ScheduleController::class, 'updateTeacher'])->name('section.updateTeacher');
 
     // Enrollment CRUD
     Route::get('/enrollment', [EnrollmentController::class, 'enrollment'])->name('AdminComponents.enrollment');
@@ -142,10 +144,6 @@ Route::prefix('Dashboard')->middleware('auth')->group(function () {
     Route::get('/operator', [AuthController::class, 'operatorDashboard'])->name('OperatorComponents.dashboard');
 
 });
-
-Route::get('/AdminComponents/enrollmenthistory', function () {
-    return view('AdminComponents.enrollmenthistory');
-})->name('AdminComponents.enrollmenthistory');
 
 Route::prefix('OperatorComponents')->group(function () {
 

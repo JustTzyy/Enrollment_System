@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Enrollment;
 use App\Models\SchoolYear;
 use App\Models\Section;
 use Cookie;
@@ -54,22 +55,33 @@ class AuthController extends Controller
     }
 
     public function adminDashboard(Request $request)
-    {
-        $selectedYearID = $request->input('schoolYear');
-    
-        // If a specific year is selected, get it; otherwise get the active year
-        if ($selectedYearID) {
-            $activeYear = SchoolYear::find($selectedYearID);
-        } else {
-            $activeYear = SchoolYear::where('status', 'active')->first();
-        }
-    
-        $schoolYears = SchoolYear::orderByDesc('yearStart')->get();
-        $studentCount = User::where('roleID', 3)->count();
-        $section = Section::count();
-    
-        return view('AdminComponents.dashboard', compact('activeYear', 'schoolYears', 'studentCount', 'section'));
+{
+    $selectedYearID = $request->input('schoolYear');
+
+    // If a specific year is selected, get it; otherwise get the active year
+    if ($selectedYearID) {
+        $activeYear = SchoolYear::find($selectedYearID);
+    } else {
+        $activeYear = SchoolYear::where('status', 'active')->first();
     }
+
+    $schoolYears = SchoolYear::orderByDesc('yearStart')->get();
+    $studentCount = User::where('roleID', 3)->count();
+    $section = Section::count();
+
+    if ($activeYear) {
+        $totalEnrolled = Enrollment::where('schoolYearID', $activeYear->id)->count();
+    }
+
+    return view('AdminComponents.dashboard', compact(
+        'activeYear',
+        'schoolYears',
+        'studentCount',
+        'section',
+        'totalEnrolled' // Pass it to the view
+    ));
+}
+
 
     public function teacherDashboard()
     {

@@ -50,7 +50,7 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item sidebar-sublink" href="{{ route('AdminComponents.teacherassignment') }}"
-                            data-parent="curriculum" data-active="teacherassignment">Assignment</a></li>
+                            data-parent="curriculum" data-active="teacherassignment">Teacher Assignment</a></li>
                     <li><a class="dropdown-item sidebar-sublink" href="{{ route('AdminComponents.strand') }}"
                             data-parent="curriculum" data-active="strand">Strand</a></li>
                     <li><a class="dropdown-item sidebar-sublink" href="{{ route('AdminComponents.section') }}"
@@ -87,7 +87,7 @@
             </div>
         </li>
         <li>
-            <a class="gap-2 dropdownhover sidebar-link" href="{{ route('AdminComponents.requirement') }}"
+            <a class="gap-2 dropdownhover sidebar-link" href="{{ route('AdminComponents.enrollmenthistory') }}"
                 data-active="enrollment"><i class="bi bi-book"></i> Enrollment History</a>
         </li>
 

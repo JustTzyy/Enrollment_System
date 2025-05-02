@@ -43,7 +43,6 @@ class EnrollmentController extends Controller
                 ->orWhereIn('id', $includedStudentIDs);
             })->where('roleID', 3)->get();
 
-            // dd($students);
 
             // Also pass strands, sections, and school years for the modal dropdowns
             $strands = Strand::all();
@@ -81,6 +80,7 @@ class EnrollmentController extends Controller
             Enrollment::create([
                 'userID' => $request->userID,
                 'gradeLevel' => $request->gradeLevel,
+                'semester' => $request->semester,
                 'sectionID' => $request->sectionID,
                 'strandID' => $request->strandID,
                 'schoolYearID' => $request->schoolYearID,
@@ -102,6 +102,7 @@ class EnrollmentController extends Controller
                 'userID' => $request->userID,
                 'gradeLevel' => $request->gradeLevel,
                 'sectionID' => $request->sectionID,
+                'semester' => $request->semester,
                 'strandID' => $request->strandID,
                 'schoolYearID' => $request->schoolYearID,
             ]);
@@ -128,14 +129,16 @@ class EnrollmentController extends Controller
     public function getSectionsByStrandAndGrade(Request $request)
 {
     $strandID = $request->input('strand_id');
-    $gradeLevel = $request->input('grade_level'); // No need to cast to int
+    $gradeLevel = $request->input('grade_level');
+    $semester = $request->input('semester'); // No need to cast to int
 
     $sections = Section::where('strandID', $strandID)
-                       ->where('gradeLevel', $gradeLevel)  // Grade level as string
+                       ->where('gradeLevel', $gradeLevel) 
+                       ->where('semester', $semester) // Grade level as string
                        ->get();
 
     return response()->json($sections);
-}
+}   
     }
     
     

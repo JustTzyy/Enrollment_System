@@ -28,7 +28,7 @@
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
     <!-- Search Input -->
     <div class="search-container">
-    <form action="{{ route('AdminComponents.section') }}" method="GET">
+    <form action="{{ route('AdminComponents.schedule') }}" method="GET">
       <div class="d-flex align-items-center">
       <input type="text" name="search" class="search-input" placeholder="Search..." value="{{ request('search') }}">
       <i class="fas fa-search search-icon"></i>
@@ -147,31 +147,26 @@
         @php
           $subjectAssignments = \App\Models\SubjectAssignment::with('subject')
               ->where('strandID', $section->strandID)
-              ->orderBy('gradeLevel')
-              ->orderBy('semester')
+              ->where('gradeLevel', $section->gradeLevel)
+              ->where('semester', $section->semester)
               ->orderBy('subjectID')
-              ->get()
-              ->groupBy(function ($item) {
-                  return 'Grade ' . $item->gradeLevel . ' - Semester ' . $item->semester;
-              });
+              ->get();
         @endphp
 
         @if($subjectAssignments->isEmpty())
-          <p>No subjects assigned to this section.</p>
+          <p>No subjects assigned to this section for Grade {{ $section->gradeLevel }}, Semester {{ $section->semester }}.</p>
         @else
-          @foreach($subjectAssignments as $group => $assignments)
-            <h6 class="mt-3">{{ $group }}</h6>
-            <ul class="mb-2">
-              @foreach($assignments as $subjectAssignment)
-                <li>{{ $subjectAssignment->subject->subject }}</li>
-              @endforeach
-            </ul>
-          @endforeach
+          <ul class="mb-2">
+            @foreach($subjectAssignments as $subjectAssignment)
+              <li>{{ $subjectAssignment->subject->subject }}</li>
+            @endforeach
+          </ul>
         @endif
       </div>
     </div>
   </div>
 </div>
+
 
 
 
@@ -217,7 +212,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-        <form action="{{ route('section.update', $section->id) }}" method="POST">
+        <form action="{{ route('schedule.update', $section->id) }}" method="POST">
         @csrf
 
         <!-- Loop through all schedules for this section -->
@@ -250,6 +245,7 @@
         <div class="col-3">
         <label for="teacher{{ $schedule->id }}" class="form-label">Teacher</label>
         <select name="teacher[]" id="teacher{{ $schedule->id }}" class="form-select" >
+        <option value="">Select Teacher</option>
         @foreach($availableTeachers as $ta)
       @if($ta->subjectID === $schedule->subjectAssignment->subjectID)
       <option value="{{ $ta->user->id }}" {{ $ta->user->id === $schedule->userID ? 'selected' : '' }}>

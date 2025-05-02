@@ -43,23 +43,23 @@
 
 
             <div class="dashboard-cards_item">
-                <a href="#" class="dashboard-cards-item_link">
-                    <div class="dashboard-cards-item_bg"></div>
+    <a href="#" class="dashboard-cards-item_link">
+        <div class="dashboard-cards-item_bg"></div>
 
-                    <div class="dashboard-cards-item_title">
-                        TOTAL ENROLLED
-                    </div>
+        <div class="dashboard-cards-item_title">
+            TOTAL ENROLLED
+        </div>
 
-                    <div class="dashboard-cards-item_number-box">
-                        <span class="dashboard-cards-item_number ">
-                            1,400
-                        </span>
-                        <span class="dashboard-cards-item_text">
-                            STUDENTS
-                        </span>
-                    </div>
-                </a>
-            </div>
+        <div class="dashboard-cards-item_number-box">
+            <span class="dashboard-cards-item_number">
+                {{ number_format($totalEnrolled) }}
+            </span>
+            <span class="dashboard-cards-item_text">
+                STUDENTS
+            </span>
+        </div>
+    </a>
+</div>
 
             <div class="dashboard-cards_item">
                 <a href="#" class="dashboard-cards-item_link">

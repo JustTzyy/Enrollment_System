@@ -44,6 +44,8 @@ class SectionController extends Controller
                 'room' => $request->room,
                 'description' => $request->description,
                 'strandID' => $request->strandID,
+                'semester' => $request->semester,
+                'gradeLevel' => $request->gradeLevel
             ]);
 
             return redirect()->back()->with('success', 'Section added successfully!');
@@ -63,6 +65,8 @@ class SectionController extends Controller
                 'room' => $request->room,
                 'description' => $request->description,
                 'strandID' => $request->strandID,
+                'semester' => $request->semester,
+                'gradeLevel' => $request->gradeLevel
             ]);
 
             return redirect()->back()->with('success', 'Section updated successfully!');

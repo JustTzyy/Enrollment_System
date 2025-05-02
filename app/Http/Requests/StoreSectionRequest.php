@@ -28,7 +28,9 @@ class StoreSectionRequest extends FormRequest
             'section' => "required|string|unique:strands,strand,$sectionId,id",
             'room' => "required",
             'description' => 'nullable',
-            'strandID' => 'required'
+            'strandID' => 'required',
+            'semester' => 'required',
+            'gradeLevel' => 'required'
             
         ];
         

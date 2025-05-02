@@ -52,7 +52,6 @@
                     <th scope="col">Fullname</th>
                     <th scope="col">Status</th>
                     <th scope="col">Date</th>
-                    <th scope="col">Details</th>
                 </tr>
             </thead>
             <tbody>
@@ -62,12 +61,6 @@
                         <td>{{ $history->user->firstName }}{{ $history->user->middleName  }} {{ $history->user->lastName  }}</td>
                         <td>{{ $history->status }}</td>
                         <td>{{ \Carbon\Carbon::parse($history->created_at)->format('F j, Y, h:i A') }}</td>
-                        
-                        <td class="text-center">
-                            <button type="button" class="btn btn-primary btn-sm">
-                                <i class="fa-solid fa-circle-info"></i>
-                            </button>
-                        </td>
                     </tr>
                 @empty
                     <tr>

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('enrollments', function (Blueprint $table) {
             $table->id();
             $table->string('gradeLevel');
+            $table->string('semester');
             $table->foreignId('userID')->constrained('users')->onDelete('cascade');
             $table->foreignId('schoolYearID')->constrained('school_years')->onDelete('cascade');
             $table->foreignId('sectionID')->constrained('sections')->onDelete('cascade');

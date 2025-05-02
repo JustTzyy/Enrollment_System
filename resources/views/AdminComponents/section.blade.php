@@ -110,6 +110,12 @@
 
                                     <dt class="col-sm-4">Section Description:</dt>
                                     <dd class="col-sm-8">{{ $section->description}}</dd>
+
+                                    <dt class="col-sm-4">Section Semester:</dt>
+                                    <dd class="col-sm-8">{{ $section->semester}}</dd>
+
+                                    <dt class="col-sm-4">Section Grade Level:</dt>
+                                    <dd class="col-sm-8">{{ $section->gradeLevel}}</dd>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -159,6 +165,22 @@
                                                     @endforeach
                                                 </select>
                                             </div>
+
+                                            <div class="mb-3 labelmodal">
+    <label for="gradeLevel{{ $section->id }}" class="form-label">Grade Level:</label>
+    <select class="form-select" id="gradeLevel{{ $section->id }}" name="gradeLevel" required>
+        <option value="Grade 11" {{ $section->gradeLevel == 'Grade 11' ? 'selected' : '' }}>Grade 11</option>
+        <option value="Grade 12" {{ $section->gradeLevel == 'Grade 12' ? 'selected' : '' }}>Grade 12</option>
+    </select>
+</div>
+
+<div class="mb-3 labelmodal">
+    <label for="semester{{ $section->id }}" class="form-label">Semester:</label>
+    <select class="form-select" id="semester{{ $section->id }}" name="semester" required>
+        <option value="Sem 1" {{ $section->semester == 'Sem 1' ? 'selected' : '' }}>1st Semester</option>
+        <option value="Sem 2" {{ $section->semester == 'Sem 2' ? 'selected' : '' }}>2nd Semester</option>
+    </select>
+</div>
 
                                             <button type="submit" class="btn btn-primary w-100 mt-3">Update</button>
                                         </form>
@@ -237,6 +259,24 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        <div class="mb-3 labelmodal">
+    <label for="gradeLevel" class="form-label">Grade Level:</label>
+    <select class="form-select" id="gradeLevel" name="gradeLevel" required>
+        <option value="" disabled selected>Select grade level</option>
+        <option value="Grade 11">Grade 11</option>
+        <option value="Grade 12">Grade 12</option>
+    </select>
+</div>
+
+<div class="mb-3 labelmodal">
+    <label for="semester" class="form-label">Semester:</label>
+    <select class="form-select" id="semester" name="semester" required>
+        <option value="" disabled selected>Select semester</option>
+        <option value="Sem 1">1st Semester</option>
+        <option value="Sem 2">2nd Semester</option>
+    </select>
+</div>
                         <button type="submit" class="btn btn-success w-100 mt-3">Save</button>
                     </form>
                 </div>

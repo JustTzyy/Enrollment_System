@@ -31,11 +31,12 @@
     <div class="search-container">
     <form action="{{ route('AdminComponents.enrollment') }}" method="GET">
       <div class="d-flex align-items-center">
-        <input type="text" name="search" class="search-input" placeholder="Search by student name..." value="{{ request('search') }}">
-        <i class="fas fa-search search-icon"></i>
+      <input type="text" name="search" class="search-input" placeholder="Search by student name..."
+        value="{{ request('search') }}">
+      <i class="fas fa-search search-icon"></i>
       </div>
     </form>
-</div>
+    </div>
 
 
     <!-- Button Group Aligned to End -->
@@ -76,14 +77,15 @@
       }">
       <i class="fa-solid fa-circle-info"></i>
       </button>
-      <form action="{{ route('enrollment.destroy', $enrollment->id) }}" method="POST" 
+      <form action="{{ route('enrollment.destroy', $enrollment->id) }}" method="POST"
       onsubmit="return confirm('Are you sure you want to delete this enrollment?');" style="display:inline;">
-  @csrf
-  @method('DELETE')
-  <button type="submit" class="btn btn-danger btn-sm">
-    <i class="fa-solid fa-trash-alt"></i>
-  </button>
-</form>      </td>
+      @csrf
+      @method('DELETE')
+      <button type="submit" class="btn btn-danger btn-sm">
+        <i class="fa-solid fa-trash-alt"></i>
+      </button>
+      </form>
+      </td>
       </tr>
 
       <!-- Enrollment Update Modal -->
@@ -111,7 +113,7 @@
       <option value="{{ $student->id }}" @if($student->id == $enrollment->userID) selected @endif>
         {{ $student->lastName }}, {{ $student->firstName }}
       </option>
-      
+
     @endforeach
         </select>
         </div>
@@ -123,6 +125,16 @@
         <option value="">Select Grade</option>
         <option value="Grade 11" @if($enrollment->gradeLevel == 'Grade 11') selected @endif>Grade 11</option>
         <option value="Grade 12" @if($enrollment->gradeLevel == 'Grade 12') selected @endif>Grade 12</option>
+        </select>
+        </div>
+
+         {{-- Semester --}}
+         <div class="mb-3">
+        <label class="form-label">Semester</label>
+        <select name="semester" id="semester{{ $enrollment->id }}" class="form-control" required>
+          <option value="">Select Semester</option>
+          <option value="Sem 1" @if($enrollment->semester == 'Sem 1') selected @endif>Sem 1</option>
+          <option value="Sem 2" @if($enrollment->semester == 'Sem 2') selected @endif>Sem 2</option>
         </select>
         </div>
 
@@ -143,6 +155,7 @@
         <label for="sectionID" class="form-label">Section</label>
         <select name="sectionID" id="sectionID{{ $enrollment->id }}" class="form-control" required>
         <option value="">Select Section</option>
+   
         </select>
         </div>
 
@@ -160,28 +173,24 @@
       </div>
       </div>
 
-
-
-
-
-    @endforeach
-
-    <script>
+      <script>
   $(document).ready(function () {
-    // Trigger AJAX when either strand or grade level changes inside any update modal
-    $(document).on('change', 'select[id^="strandID"], select[id^="gradeLevel"]', function () {
+    // Trigger AJAX when strand, grade level, or semester changes inside any update modal
+    $(document).on('change', 'select[id^="strandID"], select[id^="gradeLevel"], select[id^="semester"]', function () {
       var id = $(this).attr('id').replace(/\D/g, ''); // Extract numeric ID
       var strandID = $('#strandID' + id).val();
       var gradeLevel = $('#gradeLevel' + id).val();
+      var semester = $('#semester' + id).val();
       var sectionSelect = $('#sectionID' + id);
 
-      if (strandID && gradeLevel) {
+      if (strandID && gradeLevel && semester) {
         $.ajax({
           url: "{{ route('get.sections.by.strand.and.grade') }}",
           type: "GET",
           data: {
             strand_id: strandID,
-            grade_level: gradeLevel
+            grade_level: gradeLevel,
+            semester: semester
           },
           success: function (response) {
             sectionSelect.empty().append('<option value="">Select Section</option>');
@@ -190,7 +199,7 @@
                 sectionSelect.append('<option value="' + section.id + '">' + section.section + '</option>');
               });
 
-              // Optional: auto-select previously selected value
+              // Auto-select currently assigned section if available
               var currentSection = sectionSelect.data('current');
               if (currentSection) {
                 sectionSelect.val(currentSection);
@@ -203,23 +212,25 @@
       }
     });
 
-    // On modal show, trigger the AJAX load to preload section list
+    // On modal show, preload section list
     $('[id^="updateEnrollmentModal"]').on('show.bs.modal', function (event) {
       var modal = $(this);
       var id = modal.attr('id').replace(/\D/g, '');
 
       var strandID = $('#strandID' + id).val();
       var gradeLevel = $('#gradeLevel' + id).val();
+      var semester = $('#semester' + id).val();
       var sectionSelect = $('#sectionID' + id);
-      var currentSectionID = `{{ $enrollment->sectionID }}`;
+      var currentSectionID = sectionSelect.data('current');
 
-      if (strandID && gradeLevel) {
+      if (strandID && gradeLevel && semester) {
         $.ajax({
           url: "{{ route('get.sections.by.strand.and.grade') }}",
           type: "GET",
           data: {
             strand_id: strandID,
-            grade_level: gradeLevel
+            grade_level: gradeLevel,
+            semester: semester
           },
           success: function (response) {
             sectionSelect.empty().append('<option value="">Select Section</option>');
@@ -237,6 +248,13 @@
     });
   });
 </script>
+
+
+
+
+    @endforeach
+
+
 
     </tbody>
     </table>
@@ -280,7 +298,6 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-
         {{-- Student --}}
         <div class="mb-3">
         <label class="form-label">Student</label>
@@ -304,12 +321,21 @@
         </select>
         </div>
 
+        {{-- Semester --}}
+        <div class="mb-3">
+        <label class="form-label">Semester</label>
+        <select name="semester" class="form-control" required>
+          <option value="">Select Semester</option>
+          <option value="Sem 1">Sem 1</option>
+          <option value="Sem 2">Sem 2</option>
+        </select>
+        </div>
+
         {{-- Strand --}}
         <div class="mb-3">
         <label class="form-label">Strand</label>
         <select name="strandID" class="form-control" required>
-        <option value="">Select Section</option>
-
+          <option value="">Select Strand</option>
           @foreach($strands as $strand)
         <option value="{{ $strand->id }}">{{ $strand->strand }}</option>
       @endforeach
@@ -324,9 +350,10 @@
         </select>
         </div>
 
+
+
         {{-- Hidden Input for School Year --}}
         <input type="hidden" name="schoolYearID" value="{{ $activeSchoolYear->id }}">
-
       </div>
 
       {{-- Modal Footer with Submit Button --}}
@@ -338,43 +365,45 @@
     </div>
   </div>
 
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="path/to/your/custom-script.js"></script>
 
 
   <script type="text/javascript">
-  $(document).ready(function () {
-    function updateSectionOptions(strandID, gradeLevel, targetSelect) {
-      if (strandID && gradeLevel) {
-        $.ajax({
-          url: "{{ route('get.sections.by.strand.and.grade') }}",
-          type: "GET",
-          data: {
-            strand_id: strandID,
-            grade_level: gradeLevel
-          },
-          success: function (response) {
-            targetSelect.empty().append('<option value="">Select Section</option>');
-
-            if (response.length > 0) {
-              response.forEach(function (section) {
-                targetSelect.append('<option value="' + section.id + '">' + section.section + '</option>');
-              });
-            } else {
-              targetSelect.append('<option value="">No sections available</option>');
-            }
-          }
-        });
+    $(document).ready(function () {
+    function updateSectionOptions(strandID, gradeLevel, semester, targetSelect) {
+      if (strandID && gradeLevel && semester) {
+      $.ajax({
+        url: "{{ route('get.sections.by.strand.and.grade') }}",
+        type: "GET",
+        data: {
+        strand_id: strandID,
+        grade_level: gradeLevel,
+        semester: semester
+        },
+        success: function (response) {
+        targetSelect.empty().append('<option value="">Select Section</option>');
+        if (response.length > 0) {
+          response.forEach(function (section) {
+          targetSelect.append('<option value="' + section.id + '">' + section.section + '</option>');
+          });
+        } else {
+          targetSelect.append('<option value="">No sections available</option>');
+        }
+        }
+      });
       }
     }
 
-    // Enroll Modal — update sections when grade level or strand changes
-    $('#enrollModal').on('change', 'select[name="strandID"], select[name="gradeLevel"]', function () {
+    // Enroll Modal — update sections when grade level, strand, or semester changes
+    $('#enrollModal').on('change', 'select[name="strandID"], select[name="gradeLevel"], select[name="semester"]', function () {
       const strandID = $('#enrollModal select[name="strandID"]').val();
       const gradeLevel = $('#enrollModal select[name="gradeLevel"]').val();
+      const semester = $('#enrollModal select[name="semester"]').val();
       const targetSelect = $('#enrollModal select[name="sectionID"]');
 
-      updateSectionOptions(strandID, gradeLevel, targetSelect);
+      updateSectionOptions(strandID, gradeLevel, semester, targetSelect);
     });
 
     // Update Modals — pre-fill section options when modal is shown
@@ -384,12 +413,13 @@
 
       const strandID = $('#strandID' + enrollmentID).val();
       const gradeLevel = $('#gradeLevel' + enrollmentID).val();
+      const semester = $('#semester' + enrollmentID).val();
       const targetSelect = $('#sectionID' + enrollmentID);
 
-      updateSectionOptions(strandID, gradeLevel, targetSelect);
+      updateSectionOptions(strandID, gradeLevel, semester, targetSelect);
     });
-  });
-</script>
+    });
+  </script>
 
 
 

@@ -27,6 +27,7 @@ class StoreEnrollmentRequest extends FormRequest
             'schoolYearID' => 'required|exists:school_years,id',
             'sectionID'    => 'required|exists:sections,id',
             'strandID'     => 'required|exists:strands,id',
+            'semester'     => 'required|string'
         ];
     }
 }
