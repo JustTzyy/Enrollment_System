@@ -70,21 +70,17 @@
       <td>{{ $enrollment->strand->strand }}</td>
       <td>{{ $enrollment->section->section }}</td>
       <td>{{ \Carbon\Carbon::parse($enrollment->created_at)->format('F j, Y, h:i A') }}</td>
-      <td>
-      <button class="btn btn-primary btn-sm" onclick="if(confirm('Are you sure you want to edit this enrollment?')) { 
-      var myModal = new bootstrap.Modal(document.getElementById('updateEnrollmentModal{{ $enrollment->id }}')); 
-      myModal.show(); 
-      }">
-      <i class="fa-solid fa-circle-info"></i>
-      </button>
-      <form action="{{ route('enrollment.destroy', $enrollment->id) }}" method="POST"
-      onsubmit="return confirm('Are you sure you want to delete this enrollment?');" style="display:inline;">
-      @csrf
-      @method('DELETE')
-      <button type="submit" class="btn btn-danger btn-sm">
-        <i class="fa-solid fa-trash-alt"></i>
-      </button>
-      </form>
+      <td class="d-flex justify-content-center gap-2">
+          <button class="btn btn-outline-primary btn-sm d-flex align-items-center " title="Edit Enrollment" onclick="if(confirm('Are you sure you want to edit this enrollment?')) { var myModal = new bootstrap.Modal(document.getElementById('updateEnrollmentModal{{ $enrollment->id }}')); myModal.show(); }">
+            <i class="fas fa-pen me-1"></i> Edit
+          </button>
+          <form action="{{ route('enrollment.destroy', $enrollment->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this enrollment?');">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-outline-danger btn-sm d-flex align-items-center" title="Delete Enrollment">
+              <i class="fas fa-trash me-1"></i> Delete
+            </button>
+          </form>
       </td>
       </tr>
 
@@ -99,7 +95,7 @@
         <h5 class="modal-title" id="updateEnrollmentModalLabel{{ $enrollment->id }}">Update Enrollment</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body text-start">
 
         <!-- Enrollment ID (hidden) -->
         <input type="hidden" name="id" value="{{ $enrollment->id }}">
@@ -132,7 +128,6 @@
          <div class="mb-3">
         <label class="form-label">Semester</label>
         <select name="semester" id="semester{{ $enrollment->id }}" class="form-control" required>
-          <option value="">Select Semester</option>
           <option value="Sem 1" @if($enrollment->semester == 'Sem 1') selected @endif>Sem 1</option>
           <option value="Sem 2" @if($enrollment->semester == 'Sem 2') selected @endif>Sem 2</option>
         </select>
@@ -297,7 +292,7 @@
         <h5 class="modal-title">Enroll Student</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body text-start">
         {{-- Student --}}
         <div class="mb-3">
         <label class="form-label">Student</label>
@@ -325,7 +320,6 @@
         <div class="mb-3">
         <label class="form-label">Semester</label>
         <select name="semester" class="form-control" required>
-          <option value="">Select Semester</option>
           <option value="Sem 1">Sem 1</option>
           <option value="Sem 2">Sem 2</option>
         </select>

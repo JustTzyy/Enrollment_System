@@ -31,6 +31,7 @@ class StoreUserRequest extends FormRequest
             //User
             'firstName' => 'required',
             'lastName' => 'required',
+            'middleName' => 'nullable',
             'email' =>  "required|email|unique:users,email,$userId,id",
             'birthday' => 'required|date',
             'age' => 'required|integer',

@@ -39,4 +39,9 @@ class Schedule extends Model
     {
         return $this->belongsTo(SubjectAssignment::class, 'subjectAssignmentID');
     }
+
+    public function section()
+    {
+        return $this->belongsTo(Section::class, 'sectionID');
+    }
 }

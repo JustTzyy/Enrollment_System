@@ -50,13 +50,14 @@
                         <td>{{ $user->firstName }} {{ $user->lastName }}</td>
 
                         @foreach($requirements as $requirement)
-                            <td>
+                            <td class="text-center align-middle">
                                 @php
                                     $hasRequirement = $user->requirements->contains('id', $requirement->id);
                                 @endphp
-
-                                <input class="form-check-input" type="checkbox" disabled value="" id="checkChecked"
-                                {{ $hasRequirement ? 'checked' : '' }}>
+                                <div class="form-check d-flex justify-content-center align-items-center mb-0">
+                                    <input class="form-check-input {{ $hasRequirement ? 'bg-info border-info' : 'bg-white border-secondary' }}" type="checkbox" disabled value="" id="checkChecked"
+                                    {{ $hasRequirement ? 'checked' : '' }} data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $requirement->name }}">
+                                </div>
                             </td>
                         @endforeach
                     </tr>
@@ -95,4 +96,13 @@
     </nav>
 
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+            new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+    </script>
 @endsection

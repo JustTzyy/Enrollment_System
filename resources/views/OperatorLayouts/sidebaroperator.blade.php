@@ -6,6 +6,11 @@
                 <i class="fas fa-th-large"></i> Dashboard
             </a>
         </li>
+
+        <li>
+            <a class="gap-2 dropdownhover sidebar-link" href="{{ route('OperatorComponents.student') }}"
+                data-active="student"><i class="fa-solid fa-users-gear"></i> Student </a>
+        </li>
         <li class="sidebar-title">Institutional Management</li>
 
         <li>
@@ -24,6 +29,7 @@
             </div>
         </li>
 
+
         <li>
             <div class="dropdown">
                 <a class="d-flex dropdownhover justify-content-between align-items-center dropdown-toggle sidebar-link"
@@ -33,17 +39,23 @@
                 <ul class="dropdown-menu">
 
                     <li><a class="dropdown-item sidebar-sublink"
-                            href="{{ route('OperatorComponents.enrollmenthistory') }}" data-parent="history"
+                            href="{{ route('OperatorComponents.enrollmenthistory') }}" data-parent="report"
                             data-active="enrollmenthistory">Enrollment History</a></li>
                     <li><a class="dropdown-item sidebar-sublink" href="{{ route('OperatorComponents.studenthistory') }}"
                             data-parent="report" data-active="studenthistory">Student History</a></li>
-                    <li><a class="dropdown-item sidebar-sublink" href="{{ route('OperatorComponents.archive') }}"
-                            data-parent="report" data-active="archive">Archive</a></li>
-                    <li><a class="dropdown-item sidebar-sublink" href="{{ route('OperatorComponents.requirement') }}"
-                            data-parent="report" data-active="requirment">Requirement</a></li>
 
                 </ul>
             </div>
+        </li>
+
+        <li>
+            <a class="gap-2 dropdownhover sidebar-link" href="{{ route('OperatorComponents.archive') }}"
+                data-active="archive"><i class="fa-solid fa-archive"></i> Archives</a>
+        </li>
+
+        <li>
+            <a class="gap-2 dropdownhover sidebar-link" href="{{ route('OperatorComponents.requirement') }}"
+                data-active="requirements"><i class="fas fa-file-alt"></i> Requirements</a>
         </li>
 
     </ul>

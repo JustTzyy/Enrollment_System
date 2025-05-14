@@ -49,15 +49,16 @@
                     <span><i class="fa-solid fa-sliders"></i> Year & Curriculum</span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item sidebar-sublink" href="{{ route('AdminComponents.teacherassignment') }}"
-                            data-parent="curriculum" data-active="teacherassignment">Teacher Assignment</a></li>
+
                     <li><a class="dropdown-item sidebar-sublink" href="{{ route('AdminComponents.strand') }}"
                             data-parent="curriculum" data-active="strand">Strand</a></li>
                     <li><a class="dropdown-item sidebar-sublink" href="{{ route('AdminComponents.section') }}"
                             data-parent="curriculum" data-active="section">Section</a></li>
                     <li><a class="dropdown-item sidebar-sublink" href="{{ route('AdminComponents.subject') }}"
                             data-parent="curriculum" data-active="subject">Subject</a></li>
-                            <li><a class="dropdown-item sidebar-sublink" href="{{ route('AdminComponents.subjectassignment') }}"
+                    <li><a class="dropdown-item sidebar-sublink" href="{{ route('AdminComponents.teacherassignment') }}"
+                            data-parent="curriculum" data-active="teacherassignment">Teacher Assignment</a></li>
+                    <li><a class="dropdown-item sidebar-sublink" href="{{ route('AdminComponents.subjectassignment') }}"
                             data-parent="curriculum" data-active="subjectassignment">Subject Assignment</a></li>
                 </ul>
             </div>

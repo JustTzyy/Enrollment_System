@@ -28,15 +28,13 @@
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
     <!-- Search Input -->
     <div class="search-container">
-    <form action="{{ route('AdminComponents.schedule') }}" method="GET">
-      <div class="d-flex align-items-center">
-      <input type="text" name="search" class="search-input" placeholder="Search..." value="{{ request('search') }}">
-      <i class="fas fa-search search-icon"></i>
-      </div>
-    </form>
+      <form action="{{ route('AdminComponents.schedule') }}" method="GET">
+        <div class="d-flex align-items-center">
+          <input type="text" name="search" class="search-input" placeholder="Search..." value="{{ request('search') }}">
+          <i class="fas fa-search search-icon"></i>
+        </div>
+      </form>
     </div>
-
-
   </div>
 
   <div class="table-responsive">
@@ -56,55 +54,86 @@
       <th scope="row">{{ $section->id }}</th>
       <td>{{ $section->section }}</td>
       <td>{{ $section->strand->strand }}</td>
-      <td><button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
-      data-bs-target="#sectionDetailsModal{{ $section->id }}">See More</button>
-
-      <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
+      <td>
+      <div class="d-flex justify-content-center gap-2">
+    <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+      data-bs-target="#sectionDetailsModal{{ $section->id }}">
+      <i class="fas fa-info-circle me-1"></i>Details
+    </button>
+    <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
       data-bs-target="#subjectsModal{{ $section->id }}">
-      Subjects
-      </button>
-
-      <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
+      <i class="fas fa-book me-1"></i>Subjects
+    </button>
+    <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
       data-bs-target="#schedulesModal{{ $section->id }}">
-      Schedule
-      </button>
+      <i class="fas fa-calendar-alt me-1"></i>Schedule
+    </button>
+  </div>
 
       <!-- SCHEDULE VIEW MODAL -->
 <div class="modal fade" id="schedulesModal{{ $section->id }}" tabindex="-1" aria-labelledby="schedulesLabel{{ $section->id }}" aria-hidden="true">
-  <div class="modal-dialog modal-lg"> <!-- modal-lg makes it wider -->
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="schedulesLabel{{ $section->id }}">Schedule for {{ $section->section }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="schedulesLabel{{ $section->id }}">
+          <i class="fas fa-calendar-alt me-2"></i>Schedule for {{ $section->section }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         @if ($section->schedule->isNotEmpty())
-          <table class="table table-bordered table-striped">
-            <thead class="table-light">
-              <tr>
-                <th>Time</th>
-                <th>Day</th>
-                <th>Subject</th>
-                <th>Teacher</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach ($section->schedule as $sched)
-                <tr>
-                  <td>{{ \Carbon\Carbon::parse($sched->startTime)->format('h:i A') }}</td>
-                  <td>{{ $sched->day }}</td>
-                  <td>{{ $sched->subjectAssignment->subject->subject ?? 'N/A' }}</td>
-                  <td>{{ $sched->user->name ?? 'Unassigned' }}</td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
+          <div class="card border-0 shadow-sm">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <i class="fas fa-clock text-primary me-2"></i>
+                <h6 class="card-title mb-0">Class Schedule</h6>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="text-center" style="width: 20%">Time</th>
+                      <th class="text-center" style="width: 15%">Day</th>
+                      <th class="text-center" style="width: 35%">Subject</th>
+                      <th class="text-center" style="width: 30%">Teacher</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($section->schedule as $sched)
+                      <tr>
+                        <td class="text-center">
+                          <i class="far fa-clock text-primary me-1"></i>
+                          {{ \Carbon\Carbon::parse($sched->startTime)->format('h:i A') }}
+                        </td>
+                        <td class="text-center">
+                          <span class="badge bg-info">{{ $sched->day }}</span>
+                        </td>
+                        <td>
+                          <i class="fas fa-book text-primary me-1"></i>
+                          {{ $sched->subjectAssignment->subject->subject ?? 'N/A' }}
+                        </td>
+                        <td>
+                          <i class="fas fa-user text-primary me-1"></i>
+                          {{ $sched->user->name ?? 'Unassigned' }}
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         @else
-          <p class="text-muted">No schedules available for this section.</p>
+          <div class="alert alert-info mb-0">
+            <i class="fas fa-info-circle me-2"></i>
+            No schedules available for this section.
+          </div>
         @endif
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="fas fa-times me-1"></i>Close
+        </button>
       </div>
     </div>
   </div>
@@ -113,24 +142,27 @@
 
       </td>
       <td class="d-flex justify-content-center gap-2">
-      <button class="btn btn-primary btn-sm" onclick="if(confirm('Are you sure you want to edit this section?')) { 
-      var myModal = new bootstrap.Modal(document.getElementById('updateSectionModal{{ $section->id }}')); 
-      myModal.show(); 
+         @if($section->schedule && $section->schedule->isNotEmpty())
+    <button class="btn btn-outline-primary btn-sm"
+      onclick="if(confirm('Are you sure you want to edit this section?')) { 
+        var myModal = new bootstrap.Modal(document.getElementById('updateSectionModal{{ $section->id }}')); 
+        myModal.show(); 
       }">
-      <i class="fa-solid fa-circle-info"></i>
-      </button>
+      <i class="fas fa-pen me-1"></i>Edit
+    </button>
+  @else
+    <button class="btn btn-outline-primary btn-sm" disabled data-bs-toggle="tooltip" data-bs-placement="top" title="No schedule available to edit">
+      <i class="fas fa-pen me-1"></i>Edit
+    </button>
+  @endif
 
-      <form action="{{ route('section.generateSchedule', $section->id) }}" method="POST"
-      onsubmit="return confirm('Generate schedule for this section?')">
-      @csrf
-      <button type="submit" class="btn btn-success btn-sm">
-        Schedule
-      </button>
-      </form>
-
-
-
-
+        <form action="{{ route('section.generateSchedule', $section->id) }}" method="POST"
+          onsubmit="return confirm('Generate schedule for this section?')">
+          @csrf
+          <button type="submit" class="btn btn-outline-success btn-sm">
+            <i class="fas fa-magic me-1"></i>Generate
+          </button>
+        </form>
       </td>
 
 
@@ -139,9 +171,11 @@
   aria-labelledby="subjectsModalLabel{{ $section->id }}" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Subjects for {{ $section->section }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">
+          <i class="fas fa-book me-2"></i>Subjects for {{ $section->section }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         @php
@@ -153,15 +187,35 @@
               ->get();
         @endphp
 
-        @if($subjectAssignments->isEmpty())
-          <p>No subjects assigned to this section for Grade {{ $section->gradeLevel }}, Semester {{ $section->semester }}.</p>
-        @else
-          <ul class="mb-2">
-            @foreach($subjectAssignments as $subjectAssignment)
-              <li>{{ $subjectAssignment->subject->subject }}</li>
-            @endforeach
-          </ul>
-        @endif
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-3">
+              <i class="fas fa-graduation-cap text-primary me-2"></i>
+              <h6 class="card-title mb-0">Grade {{ $section->gradeLevel }}, Semester {{ $section->semester }}</h6>
+            </div>
+
+            @if($subjectAssignments->isEmpty())
+              <div class="alert alert-info mb-0">
+                <i class="fas fa-info-circle me-2"></i>
+                No subjects assigned to this section.
+              </div>
+            @else
+              <div class="list-group list-group-flush">
+                @foreach($subjectAssignments as $subjectAssignment)
+                  <div class="list-group-item d-flex align-items-center py-2">
+                    <i class="fas fa-bookmark text-primary me-2"></i>
+                    <span>{{ $subjectAssignment->subject->subject }}</span>
+                  </div>
+                @endforeach
+              </div>
+            @endif
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="fas fa-times me-1"></i>Close
+        </button>
       </div>
     </div>
   </div>
@@ -173,27 +227,46 @@
       <!-- Modal -->
       <div class="modal fade" id="sectionDetailsModal{{ $section->id }}" tabindex="-1"
       aria-labelledby="sectionDetailsModalLabel{{ $section->id }}" aria-hidden="true">
-      <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-        <h5 class="modal-title" id="sectionDetailsModalLabel{{ $section->id }}">Section Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content shadow-lg border-0">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title d-flex align-items-center" id="sectionDetailsModalLabel{{ $section->id }}">
+            <i class="fas fa-info-circle me-2"></i>Section Details
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-        <dt class="col-sm-4">Section Name:</dt>
-        <dd class="col-sm-8">{{ $section->section}}</dd>
-
-        <dt class="col-sm-4">Room:</dt>
-        <dd class="col-sm-8">{{ $section->room}}</dd>
-
-        <dt class="col-sm-4">Strand:</dt>
-        <dd class="col-sm-8">{{ $section->strand->strand }}</dd>
-
-        <dt class="col-sm-4">Section Description:</dt>
-        <dd class="col-sm-8">{{ $section->description}}</dd>
+        <div class="modal-body text-start">
+          <div class="card border-0">
+            <div class="card-body">
+              <div class="mb-3">
+                <h6 class="fw-bold text-info mb-2"><i class="fas fa-book me-2 text-info"></i>Section Name</h6>
+                <div class="ps-4 text-justify">{{ $section->section }}</div>
+              </div>
+              <div class="mb-3">
+                <h6 class="fw-bold text-info mb-2"><i class="fas fa-door-open me-2 text-info"></i>Room</h6>
+                <div class="ps-4 text-justify">{{ $section->room }}</div>
+              </div>
+              <div class="mb-3">
+                <h6 class="fw-bold text-info mb-2"><i class="fas fa-layer-group me-2 text-info"></i>Strand</h6>
+                <div class="ps-4 text-justify">{{ $section->strand->strand }}</div>
+              </div>
+              <div class="mb-3">
+                <h6 class="fw-bold text-info mb-2"><i class="fas fa-align-left me-2 text-info"></i>Description</h6>
+                <div class="ps-4 text-justify">{{ $section->description }}</div>
+              </div>
+              <div class="mb-3">
+                <h6 class="fw-bold text-info mb-2"><i class="fas fa-calendar-alt me-2 text-info"></i>Semester</h6>
+                <div class="ps-4 text-justify">{{ $section->semester }}</div>
+              </div>
+              <div>
+                <h6 class="fw-bold text-info mb-2"><i class="fas fa-graduation-cap me-2 text-info"></i>Grade Level</h6>
+                <div class="ps-4 text-justify">{{ $section->gradeLevel }}</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
       </div>

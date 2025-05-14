@@ -1,0 +1,224 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+body {
+    font-family: "Roboto", sans-serif;
+    height: 100vh;
+}
+
+.dashboard-container {
+    width: 1142px;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: 50px;
+    margin-top: 30px;
+    color: #880202;
+    font-weight: bold;
+}
+
+p {
+    font-size: 20px;
+    color: #000000;
+    font-weight: 500;
+}
+
+.dashboard-cards_box {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 50px 0;
+}
+
+.dashboard-cards_item {
+    flex-basis: calc(33.33333% - 30px);
+    margin: 0 15px 30px;
+    overflow: hidden;
+    border-radius: 28px;
+    text-decoration: none;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px,
+        rgba(0, 0, 0, 0.23) 0px 6px 6px;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.active-school-year {
+    width: 100rem;
+}
+
+.dashboard-cards-item_link {
+    display: block;
+    padding: 30px 20px;
+    background: #b22222;
+    overflow: hidden;
+    position: relative;
+    text-decoration: none;
+}
+
+/* Hover Effects */
+.dashboard-cards-item_link:hover,
+.dashboard-cards-item_link:hover .dashboard-cards-item_number,
+.dashboard-cards-item_link:hover .dashboard-cards-item_text,
+.dashboard-cards-item_link:hover .dashboard-cards-item_title,
+.dashboard-cards-item_link:hover .dashboard-cards-item_year {
+    text-decoration: none;
+    color: #000000;
+}
+
+.dashboard-cards-item_link:hover .dashboard-cards-item_bg {
+    transform: scale(10);
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px;
+}
+
+.dashboard-cards_item:hover {
+    transform: scale(1.05);
+}
+
+.dashboard-cards-item_link:hover .dashboard-cards-item_bg_year {
+    transform: scale(10);
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px;
+}
+
+/* Card Title */
+.dashboard-cards-item_title {
+    min-height: auto;
+    margin: 0px;
+    overflow: hidden;
+    font-weight: bold;
+    font-size: 30px;
+    color: #ffffff;
+    z-index: 2;
+    position: relative;
+}
+
+.dashboard-cards-item_title:hover {
+    color: #000000;
+}
+
+.dashboard-cards-item_number-box {
+    font-size: 18px;
+    color: #ffffff;
+    z-index: 2;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    text-align: center;
+}
+
+.dashboard-cards-item_number {
+    font-weight: bold;
+    color: #f9b234;
+    transition: color 0.5s ease;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.dashboard-cards-item_year {
+    font-weight: bold;
+    color: #f9b234;
+    transition: color 0.5s ease;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.dashboard-cards-item_text {
+    font-weight: bold;
+    color: #f9b234;
+    transition: color 0.5s ease;
+    font-size: 17px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.dashboard-cards_item.active-school-year {
+    flex-basis: 100%;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Background Circle */
+.dashboard-cards-item_bg {
+    height: 128px;
+    width: 128px;
+    background-color: #f9b234;
+    z-index: 1;
+    position: absolute;
+    top: -75px;
+    right: -75px;
+    border-radius: 50%;
+    transition: all 0.5s ease;
+}
+
+.dashboard-cards-item_bg_year {
+    height: 150px;
+    width: 223px;
+    background-color: #f9b234;
+    z-index: 1;
+    position: absolute;
+    top: -75px;
+    right: -75px;
+    border-radius: 50%;
+    transition: all 0.5s ease;
+}
+
+/* Alternate Background Colors */
+.dashboard-cards_item:nth-child(2n) .dashboard-cards-item_bg {
+    background-color: #f9b234;
+}
+
+.dashboard-cards_item:nth-child(3n) .dashboard-cards-item_bg {
+    background-color: #f9b234;
+}
+
+.dashboard-cards_item:nth-child(4n) .dashboard-cards-item_bg {
+    background-color: #f9b234;
+}
+
+.dashboard-cards_item:nth-child(5n) .dashboard-cards-item_bg {
+    background-color: #f9b234;
+}
+
+.dashboard-cards_item:nth-child(6n) .dashboard-cards-item_bg {
+    background-color: #f9b234;
+}
+
+/* Responsive Design */
+@media only screen and (max-width: 979px) {
+    .dashboard-cards_item {
+        flex-basis: calc(50% - 30px);
+    }
+
+    .dashboard-cards-item_title {
+        font-size: 24px;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .dashboard-container {
+        width: 96%;
+    }
+}
+
+@media only screen and (max-width: 639px) {
+    .dashboard-cards_item {
+        flex-basis: 100%;
+    }
+
+    .dashboard-cards-item_title {
+        min-height: 72px;
+        font-size: 24px;
+    }
+
+    .dashboard-cards-item_link {
+        padding: 22px 40px;
+    }
+
+    .dashboard-cards-item_number-box {
+        font-size: 16px;
+    }
+}

@@ -2,14 +2,17 @@
 
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\OperatorUserController;
 use App\Http\Controllers\RequirementController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StrandController;
+use App\Http\Controllers\StudentUserController;
 use App\Http\Controllers\SubjectAssignmentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherAssignmentController;
+use App\Http\Controllers\TeacherUserController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginInterfaceController;
 use App\Http\Controllers\UserHistoryController;
@@ -26,6 +29,10 @@ Route::get('/', function () {
 
 //views
 Route::get('/Authentication/login', [LoginInterfaceController::class, 'loginInterface'])->name('login');
+
+//Login Processes
+Route::post('/Authentication/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 //crud
 Route::prefix('AdminComponents')->middleware('auth')->group(function () {
@@ -132,45 +139,78 @@ Route::prefix('AdminComponents')->middleware('auth')->group(function () {
 
 });
 
-//Login Processes
-Route::post('/Authentication/login', [AuthController::class, 'login'])->name('login.post');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::prefix('OperatorComponents')->group(function () {
+
+    // Section CRUD Routes
+    Route::get('/schedule', [OperatorUserController::class, 'section'])->name('OperatorComponents.schedule');
+    Route::post('/schedule', [OperatorUserController::class, 'store'])->name('OperatorComponents.schedule.post');
+    Route::post('/schedule/update/{id}', [OperatorUserController::class, 'update'])->name('OperatorComponents.schedule.update');
+    Route::post('/admin/sections/{id}/generate-schedule', [OperatorUserController::class, 'generate'])->name('OperatorComponents.section.generateSchedule');
+    Route::put('/schedule/update-teacher/{id}', [OperatorUserController::class, 'updateTeacher'])->name('OperatorComponents.section.updateTeacher');
+
+    // Enrollment CRUD
+    Route::get('/enrollment', [OperatorUserController::class, 'enrollment'])->name('OperatorComponents.enrollment');
+    Route::post('/enrollment', [OperatorUserController::class, 'store'])->name('OperatorComponents.enrollment.post');
+    Route::post('/enrollment/update/{id}', [OperatorUserController::class, 'update'])->name('OperatorComponents.enrollment.update');
+    Route::delete('/enrollment/delete/{id}', [OperatorUserController::class, 'destroy'])->name('OperatorComponents.enrollment.destroy');
+    Route::get('/get-sections-by-strand-and-grade', [OperatorUserController::class, 'getSectionsByStrandAndGrade'])->name('OperatorComponents.get.sections.by.strand.and.grade');
+
+    //Archives
+    Route::get('/archive', [OperatorUserController::class, 'arstudent'])->name('OperatorComponents.archive');
+    Route::post('/archive/{id}/archive', [OperatorUserController::class, 'archive'])->name('OperatorComponents.archive.archive');
+
+    //Histo
+    Route::get('/studenthistory', [OperatorUserController::class, 'studenthistory'])->name('OperatorComponents.studenthistory');
+    Route::get('/enrollmenthistory', [OperatorUserController::class, 'enrollmenthistory'])->name('OperatorComponents.enrollmenthistory');
+
+    //Student Crud
+    Route::get('/student', [OperatorUserController::class, 'student'])->name('OperatorComponents.student');
+    Route::post('/student', [OperatorUserController::class, 'store'])->name('OperatorComponents.student.post');
+    Route::post('/student/update/{id}', [OperatorUserController::class, 'update'])->name('OperatorComponents.student.update');
+    Route::delete('/student/delete/{id}', [OperatorUserController::class, 'destroy'])->name('OperatorComponents.student.destroy');
+    Route::post('/student/{id}/archive', [OperatorUserController::class, 'archive'])->name('OperatorComponents.student.archive');
+
+     //Requirements
+     Route::get('/requirement', [OperatorUserController::class, 'requirement'])->name('OperatorComponents.requirement');
+
+     //Settings
+    Route::get('/setting', [OperatorUserController::class, 'index'])->name('OperatorComponents.setting');
+    Route::post('/setting/update-user', [OperatorUserController::class, 'updateUser'])->name('OperatorComponents.setting.updateUser');
+    Route::post('/setting/update-address', [OperatorUserController::class, 'updateAddress'])->name('OperatorComponents.setting.updateAddress');
+
+});
+
+Route::prefix('StudentComponents')->middleware('auth')->group(function () {
+
+
+    Route::get('/spr', [StudentUserController::class, 'spr'])->name('StudentComponents.spr');
+    Route::get('/class', [StudentUserController::class, 'class'])->name('StudentComponents.class');
+    Route::get('/corecommitments', [StudentUserController::class, 'core'])->name('StudentComponents.corecommitments');
+    Route::get('/setting', [StudentUserController::class, 'index'])->name('StudentComponents.setting');
+    Route::post('/setting/update-user', [StudentUserController::class, 'updateUser'])->name('student.setting.updateUser');
+    Route::post('/setting/update-address', [StudentUserController::class, 'updateAddress'])->name('student.setting.updateAddress');
+    Route::get('/credential', [StudentUserController::class, 'credential'])->name('StudentComponents.credential');
+});
+
+
+Route::prefix('TeacherComponents')->middleware('auth')->group(function () {
+
+    Route::get('/specialists', [TeacherUserController::class, 'specialists'])->name('TeacherComponents.specialists');
+    Route::get('/corecommitments', [TeacherUserController::class, 'core'])->name('TeacherComponents.corecommitments');
+    Route::get('/setting', [TeacherUserController::class, 'index'])->name('TeacherComponents.setting');
+    Route::post('/setting/update-user', [TeacherUserController::class, 'updateUser'])->name('teacher.setting.updateUser');
+    Route::post('/setting/update-address', [TeacherUserController::class, 'updateAddress'])->name('teacher.setting.updateAddress');
+    Route::get('/class', [TeacherUserController::class, 'class'])->name('TeacherComponents.class');
+});
 
 Route::prefix('Dashboard')->middleware('auth')->group(function () {
 
     Route::get('/admin', [AuthController::class, 'adminDashboard'])->name('AdminComponents.dashboard');
-    Route::get('/teacher', [AuthController::class, 'teacherDashboard']);
-    Route::get('/student', [AuthController::class, 'studentDashboard']);
+    Route::get('/teacher', [AuthController::class, 'teacherDashboard'])->name('TeacherComponents.dashboard');
+    Route::get('/student', [AuthController::class, 'studentDashboard'])->name('StudentComponents.dashboard');
     Route::get('/operator', [AuthController::class, 'operatorDashboard'])->name('OperatorComponents.dashboard');
 
-});
-
-Route::prefix('OperatorComponents')->group(function () {
-
-    // Enrollment Route
-    Route::get('/enrollment', function () {
-        return view('OperatorComponents.enrollment');
-    })->name('OperatorComponents.enrollment');
-
-    // Enrollment History Route
-    Route::get('/enrollmenthistory', function () {
-        return view('OperatorComponents.enrollmenthistory');
-    })->name('OperatorComponents.enrollmenthistory');
-
-    // Requirements Route
-    Route::get('/requirement', [RequirementController::class, 'requirement'])->name('OperatorComponents.requirement');
-
-    // Schedule Route
-    Route::get('/schedule', function () {
-        return view('OperatorComponents.schedule');
-    })->name('OperatorComponents.schedule');
-
-    // Student History Route
-    Route::get('/studenthistory', [UserHistoryController::class, 'student'])->name('OperatorComponents.studenthistory');
-
-    // Archive Route
-    Route::get('/archive', [ArchiveController::class, 'student'])->name('OperatorComponents.archive');
-    Route::post('/archive/{id}/archive', [ArchiveController::class, 'archive'])->name('OperatorComponents.archive.archive');
 });
 
 

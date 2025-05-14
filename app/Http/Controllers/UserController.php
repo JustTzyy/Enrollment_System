@@ -224,6 +224,7 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($id);
 
+
             //Update user
             $user->update([
                 'firstName' => $request->firstName,
@@ -235,9 +236,9 @@ class UserController extends Controller
                 'age' => $request->age,
                 'gender' => $request->gender,
                 'contactNumber' => $request->contactNumber,
-                'status' => $request->status,
 
             ]);
+
 
             //Update address
             $address = Address::where('userID', $id)->first();

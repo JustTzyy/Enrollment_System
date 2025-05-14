@@ -1,8 +1,8 @@
-@extends('Dashboard.admin')
+@extends('Dashboard.operator')
 
-@section('title', 'UMIANKonek | Admin')
+@section('title', 'UMIANKonek | Operator')
 
-@section('content')
+@section('operatorcontent')
   <header class="text-center mb-2">
     <h1>STAFF MANAGEMENT</h1>
     <p>STUDENT</p>
@@ -29,7 +29,7 @@
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
     <!-- Search Input -->
     <div class="search-container">
-    <form action="{{ route('AdminComponents.student') }}" method="GET">
+    <form action="{{ route('OperatorComponents.student') }}" method="GET">
       <div class="d-flex align-items-center">
       <input type="text" name="search" class="search-input" placeholder="Search..." value="{{ request('search') }}">
       <i class="fas fa-search search-icon"></i>
@@ -82,13 +82,6 @@
           <i class="fas fa-pen me-1"></i> Edit
         </button>
 
-        <form action="{{ route('admin.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');" style="display:inline;">
-          @csrf
-          @method('DELETE')
-          <button type="submit" class="btn btn-outline-danger btn-sm d-flex align-items-center">
-            <i class="fas fa-trash me-1"></i> Delete
-          </button>
-        </form>
       </td>
       </tr>
 
@@ -431,7 +424,7 @@
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
-    <form action="{{ route('AdminComponents.student') }}" method="POST">
+    <form action="{{ route('OperatorComponents.student') }}" method="POST">
       @csrf
 
       <!-- Nav tabs -->

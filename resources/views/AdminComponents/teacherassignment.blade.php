@@ -42,16 +42,13 @@
             <button class="btn btncustom mx-2" data-bs-toggle="modal" data-bs-target="#addAssignmentModal">
                 New Assignment
             </button>
-            <button type="button" class="btn btnarchive mx-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Archived
-            </button>
         </div>
     </div>
 
     {{-- Table --}}
     <div class="table-responsive mt-3">
     @php
-    // Group this page’s assignments by userID, so each teacher appears once
+    // Group this page's assignments by userID, so each teacher appears once
     $assignmentsByUser = $assignments->groupBy('userID');
 @endphp
 
@@ -65,43 +62,31 @@
         </tr>
     </thead>
     <tbody>
-        @forelse ($assignmentsByUser as $userId => $userAssignments)
+        @forelse ($users as $user)
             @php 
-                $teacher = $userAssignments->first()->user;
+                $userAssignments = $assignments->where('userID', $user->id);
                 $firstAssignment = $userAssignments->first();
             @endphp
             <tr>
                 <td>
-                  {{ $teacher->firstName }}
-                  {{ $teacher->middleName }}
-                  {{ $teacher->lastName }}
+                    {{ $user->firstName }}
+                    {{ $user->middleName }}
+                    {{ $user->lastName }}
                 </td>
                 <td>{{ $userAssignments->count() }}</td>
                 <td>
-                    <button class="btn btn-info btn-sm"
+                    <button class="btn btn-outline-info btn-sm "
                             data-bs-toggle="modal"
-                            data-bs-target="#userDetailsModal{{ $userId }}">
-                        See More
+                            data-bs-target="#userDetailsModal{{ $user->id }}">
+                        <i class="fas fa-eye me-1"></i> See More
                     </button>
                 </td>
                 <td class="d-flex justify-content-center gap-2">
-                    {{-- Edit the **first** assignment for this teacher --}}
-                    <button class="btn btn-primary btn-sm"
-        onclick="if(confirm('Update this assignment?')) {
-                   var myModal = new bootstrap.Modal(document.getElementById('editSubjectsModal{{ $userId }}'));
-                   myModal.show();
-                 }">
-  <i class="fa-solid fa-pen"></i>
+                    <button class="btn btn-outline-primary btn-sm d-flex align-items-center"
+                        onclick="if(confirm('Update this assignment?')) { var myModal = new bootstrap.Modal(document.getElementById('editSubjectsModal{{ $user->id }}')); myModal.show(); }">
+                        <i class="fas fa-pen me-1"></i> Edit
 </button>
 
-                    <form action="{{ route('teacherassignment.destroy', $firstAssignment->id) }}"
-                          method="POST"
-                          onsubmit="return confirm('Delete this assignment?');">
-                        @csrf @method('DELETE')
-                        <button class="btn btn-danger btn-sm">
-                          <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </form>
                 </td>
             </tr>
         @empty
@@ -117,46 +102,43 @@
   $assignmentsByUser = $assignments->groupBy('userID');
 @endphp
 
-@foreach($assignmentsByUser as $userId => $userAssignments)
-  @php $teacher = $userAssignments->first()->user; @endphp
-
-  <!-- Edit Subjects Modal -->
-  <div class="modal fade" id="editSubjectsModal{{ $userId }}" tabindex="-1">
+@foreach($users as $user)
+    @php $userAssignments = $assignments->where('userID', $user->id); @endphp
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editSubjectsModal{{ $user->id }}" tabindex="-1">
     <div class="modal-dialog">
-      <form action="{{ route('teacherassignment.update', $userId) }}" 
+            <form action="{{ route('teacherassignment.update', $user->id) }}"
             method="POST" 
             class="modal-content"
-            onsubmit="return validateSubjectEdit{{ $userId }}()">
+                  onsubmit="return validateSubjectEdit{{ $user->id }}()">
         @csrf
         <div class="modal-header">
-          <h5 class="modal-title">Edit Subjects for {{ $teacher->firstName }} {{ $teacher->lastName }}</h5>
+                    <h5 class="modal-title">Edit Subjects for {{ $user->firstName }} {{ $user->lastName }}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body text-start">
-          <!-- Subject Input -->
-          <label for="subjectInput{{ $userId }}" class="form-label">
+                    <label for="subjectInput{{ $user->id }}" class="form-label">
             Choose or enter subjects:
           </label>
-          <input list="subjectOptions{{ $userId }}"
-                 id="subjectInput{{ $userId }}"
+                    <input list="subjectOptions{{ $user->id }}"
+                           id="subjectInput{{ $user->id }}"
                  class="form-control mb-2"
                  placeholder="Type a subject and press Enter or Comma">
-          <datalist id="subjectOptions{{ $userId }}">
+                    <datalist id="subjectOptions{{ $user->id }}">
             @foreach($subjects as $subject)
               <option data-id="{{ $subject->id }}" value="{{ $subject->subject }}"></option>
             @endforeach
           </datalist>
-
-          <div id="selectedSubjects{{ $userId }}" class="mb-2 d-flex flex-wrap gap-2">
+                    <div id="selectedSubjects{{ $user->id }}" class="mb-2 d-flex flex-wrap gap-2">
             @foreach($userAssignments as $ua)
               <span class="badge bg-primary d-flex align-items-center gap-1 px-2 py-1">
                 {{ $ua->subject->subject }}
-                <button type="button" class="btn-close btn-close-white btn-sm ms-1" aria-label="Remove"></button>
-                <input type="hidden" name="subjectIDs[]" value="{{ $ua->subjectID }}">
+                                <button type="button" class="btn-close btn-close-white btn-sm ms-1 remove-subject-btn" aria-label="Remove"></button>
+                                <input type="hidden" name="subjectIDs[]" value="{{ $ua->subjectID }}" data-subject="{{ $ua->subject->subject }}">
               </span>
             @endforeach
           </div>
-          <div id="subjectError{{ $userId }}" class="text-danger" style="display:none">
+                    <div id="subjectError{{ $user->id }}" class="text-danger" style="display:none">
             Please select at least one valid subject.
           </div>
         </div>
@@ -166,109 +148,100 @@
       </form>
     </div>
   </div>
-
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      (function(){
-        const uid = "{{ $userId }}";
-        const input = document.getElementById("subjectInput"+uid);
-        const datalistOpts = document.querySelectorAll("#subjectOptions"+uid+" option");
-        const selectedContainer = document.getElementById("selectedSubjects"+uid);
-        const error = document.getElementById("subjectError"+uid);
-        const added = new Map();
+    document.addEventListener("DOMContentLoaded", function() {
+        var subjectInput = document.getElementById("subjectInput{{ $user->id }}");
+        var subjectOptions = document.querySelectorAll("#subjectOptions{{ $user->id }} option");
+        var selectedContainer = document.getElementById("selectedSubjects{{ $user->id }}");
 
-        // Initialize map with existing subjects
-        selectedContainer.querySelectorAll("input[type=hidden]").forEach(h => {
-          const subjName = h.parentNode.firstChild.textContent.trim();
-          added.set(subjName, h.value);
-        });
-
-        // Remove badge handler
-        selectedContainer.addEventListener("click", e => {
-          if (e.target.matches(".btn-close")) {
-            const badge = e.target.closest("spanBadge");
-            const h = badge.querySelector("input[type=hidden]");
-            added.delete(h.value);
-            badge.remove();
-          }
-        });
-
-        // Add new subjects on Enter or Comma
-        input.addEventListener("keydown", e => {
+        if (subjectInput) {
+            subjectInput.addEventListener("keydown", function(e) {
           if (e.key === "Enter" || e.key === ",") {
             e.preventDefault();
-            const val = input.value.trim();
-            input.value = "";
-            if (!val || added.has(val)) return;
+                    var inputVal = subjectInput.value.trim();
+                    subjectInput.value = '';
 
-            let match = false;
-            datalistOpts.forEach(opt => {
-              if (opt.value === val) {
-                match = true;
-                const id = opt.getAttribute("data-id");
-                added.set(val, id);
+                    if (inputVal === '') return;
 
-                const badge = document.createElement("span");
+                    // Check for duplicates
+                    var alreadyAdded = Array.from(selectedContainer.querySelectorAll("input[name='subjectIDs[]']")).some(function(input) {
+                        return input.getAttribute("data-subject") === inputVal;
+                    });
+                    if (alreadyAdded) return;
+
+                    // Check if input matches a valid subject
+                    var matched = false;
+                    subjectOptions.forEach(function(option) {
+                        if (option.value === inputVal) {
+                            matched = true;
+                            var id = option.getAttribute("data-id");
+
+                            var badge = document.createElement("span");
                 badge.className = "badge bg-primary d-flex align-items-center gap-1 px-2 py-1";
                 badge.innerHTML = `
-                  ${val}
-                  <button type="button" class="btn-close btn-close-white btn-sm ms-1" aria-label="Remove"></button>
-                  <input type="hidden" name="subjectIDs[]" value="${id}">
-                `;
-                // handle remove
-                badge.querySelector("button").addEventListener("click", () => {
-                  added.delete(val);
+                                ${inputVal}
+                                <button type="button" class="btn-close btn-close-white btn-sm ms-1 remove-subject-btn" aria-label="Remove"></button>
+                            `;
+
+                            var hiddenInput = document.createElement("input");
+                            hiddenInput.type = "hidden";
+                            hiddenInput.name = "subjectIDs[]";
+                            hiddenInput.value = id;
+                            hiddenInput.setAttribute("data-subject", inputVal);
+
+                            badge.querySelector("button").addEventListener("click", function() {
                   badge.remove();
+                                hiddenInput.remove();
                 });
 
                 selectedContainer.appendChild(badge);
+                            selectedContainer.appendChild(hiddenInput);
               }
             });
 
-            if (!match) alert(`Subject "${val}" not recognized.`);
+                    if (!matched) {
+                        alert(`Subject "${inputVal}" is not recognized.`);
           }
-        });
-
-        // Form validation
-        window["validateSubjectEdit"+uid] = function() {
-          if (added.size === 0) {
-            error.style.display = "block";
-            return false;
-          }
-          return true;
-        };
-      })();
+                }
+            });
+        }
     });
   </script>
-@endforeach
-
-
-{{-- One “See More” modal per teacher, listing ALL their subjects --}}
-@foreach($assignmentsByUser as $userId => $userAssignments)
-  @php $teacher = $userAssignments->first()->user; @endphp
-  <div class="modal fade" id="userDetailsModal{{ $userId }}" tabindex="-1">
+    <!-- Details Modal -->
+    <div class="modal fade" id="userDetailsModal{{ $user->id }}" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <div class="modal-header">
+                <div class="modal-header bg-info text-white">
           <h5 class="modal-title">
-            Subjects for {{ $teacher->firstName }} {{ $teacher->lastName }}
+                        <i class="fas fa-eye me-2"></i>Subjects for {{ $user->firstName }} {{ $user->lastName }}
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-chalkboard-teacher text-info me-2"></i>
+                                <h6 class="card-title mb-0">Assigned Subjects</h6>
+                            </div>
           @if($userAssignments->isEmpty())
-            <p><em>No assignments found.</em></p>
+                                <div class="alert alert-info mb-0">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    No assignments found.
+                                </div>
           @else
-            <ul class="list-group">
+                                <ul class="list-group list-group-flush">
               @foreach($userAssignments as $ua)
-                <li class="list-group-item">
-                  <strong>{{ optional($ua->subject)->subject ?? '—' }}</strong>
-                  (Code: {{ $ua->code }})<br>
-                  Assigned on: {{ $ua->created_at->format('F j, Y') }}
+                                        <li class="list-group-item d-flex align-items-center">
+                                            <i class="fas fa-book text-info me-2"></i>
+                                            <span class="fw-semibold">{{ optional($ua->subject)->subject ?? '—' }}</span>
+                                            <span class="ms-auto text-muted small">(Code: {{ $ua->code }})</span>
                 </li>
               @endforeach
             </ul>
           @endif
+                        </div>
+                    </div>
         </div>
       </div>
     </div>

@@ -22,10 +22,16 @@ class ScheduleController extends Controller
         try {
             // Build the query for sections with an optional search filter
             $query = Section::with('strand')
-                ->when($request->has('search'), function ($q, Request $request) {
+                ->when($request->has('search'), function ($q) use ($request) {
                     $search = $request->search;
-                    $q->where('section', 'LIKE', "{$search}%")
-                        ->orWhere('id', 'LIKE', "{$search}");
+                    $q->where(function($query) use ($search) {
+                        $query->where('section', 'LIKE', "%{$search}%")
+                            ->orWhere('room', 'LIKE', "%{$search}%")
+                            ->orWhere('description', 'LIKE', "%{$search}%")
+                            ->orWhereHas('strand', function($q) use ($search) {
+                                $q->where('strand', 'LIKE', "%{$search}%");
+                            });
+                    });
                 });
 
             // Get sections with pagination
@@ -39,8 +45,6 @@ class ScheduleController extends Controller
 
             // Get all teacher‐to‐subject assignments (only eager‐load the user)
             $availableTeachers = TeacherAssignment::with('user')->get();
-
-            // dd($availableTeachers);
 
             return view('AdminComponents.schedule', compact('sections', 'strands', 'schedules', 'availableTeachers'));
 

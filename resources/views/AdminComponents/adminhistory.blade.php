@@ -23,24 +23,30 @@
 
         <!-- Status Dropdown -->
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                {{ request('status', 'Filter by Status') }}
+            <button class="btn btn-outline-info dropdown-toggle d-flex align-items-center shadow-sm rounded-pill px-3 py-2" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-filter me-2"></i> {{ request('status', 'Filter by Status') }}
             </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item"
-                        href="{{ route('AdminComponents.adminhistory', ['status' => 'Added'] + request()->query()) }}">Added</a>
-                </li>
-                <li><a class="dropdown-item"
-                        href="{{ route('AdminComponents.adminhistory', ['status' => 'Updated'] + request()->query()) }}">Updated</a>
-                </li>
-                <li><a class="dropdown-item"
-                        href="{{ route('AdminComponents.adminhistory', ['status' => 'Deleted'] + request()->query()) }}">Deleted</a>
-                </li>
-                <li><a class="dropdown-item"
-                        href="{{ route('AdminComponents.adminhistory', ['status' => 'Restored'] + request()->query()) }}">Restored</a>
-                </li>
+            <ul class="dropdown-menu shadow rounded-3 mt-1">
+                <li><a class="dropdown-item py-2" href="{{ route('AdminComponents.adminhistory', ['status' => 'Added'] + request()->query()) }}"><i class="fas fa-plus-circle text-success me-2"></i>Added</a></li>
+                <li><a class="dropdown-item py-2" href="{{ route('AdminComponents.adminhistory', ['status' => 'Updated'] + request()->query()) }}"><i class="fas fa-edit text-primary me-2"></i>Updated</a></li>
+                <li><a class="dropdown-item py-2" href="{{ route('AdminComponents.adminhistory', ['status' => 'Deleted'] + request()->query()) }}"><i class="fas fa-trash-alt text-danger me-2"></i>Deleted</a></li>
+                <li><a class="dropdown-item py-2" href="{{ route('AdminComponents.adminhistory', array_filter(request()->except('status'))) }}"><i class="fas fa-list text-info me-2"></i>All</a></li>
             </ul>
         </div>
+        <style>
+        .dropdown-menu {
+            min-width: 200px;
+            border-radius: 1rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+        .dropdown-item {
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+        }
+        .dropdown-item:hover {
+            background: #e9f5fb;
+        }
+        </style>
     </div>
 
     {{-- HISTORY TABLE --}}

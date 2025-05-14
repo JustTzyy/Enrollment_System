@@ -25,7 +25,7 @@ class AuthController extends Controller
             Auth::login($user);
 
             if ($user->roleID == 1) {
-                Cookie::queue('username', $user->name, 60); 
+                Cookie::queue('username', $user->name, 60);
 
                 return redirect('/Dashboard/admin');
             } elseif ($user->roleID == 2) {
@@ -55,51 +55,111 @@ class AuthController extends Controller
     }
 
     public function adminDashboard(Request $request)
-{
-    $selectedYearID = $request->input('schoolYear');
+    {
+        $selectedYearID = $request->input('schoolYear');
 
-    // If a specific year is selected, get it; otherwise get the active year
-    if ($selectedYearID) {
-        $activeYear = SchoolYear::find($selectedYearID);
-    } else {
-        $activeYear = SchoolYear::where('status', 'active')->first();
+        // If a specific year is selected, get it; otherwise get the active year
+        if ($selectedYearID) {
+            $activeYear = SchoolYear::find($selectedYearID);
+        } else {
+            $activeYear = SchoolYear::where('status', 'active')->first();
+        }
+
+        $schoolYears = SchoolYear::orderByDesc('yearStart')->get();
+        $studentCount = User::where('roleID', 3)->count();
+        $section = Section::count();
+
+        if ($activeYear) {
+            $totalEnrolled = Enrollment::where('schoolYearID', $activeYear->id)->count();
+        }
+
+        return view('AdminComponents.dashboard', compact(
+            'activeYear',
+            'schoolYears',
+            'studentCount',
+            'section',
+            'totalEnrolled' // Pass it to the view
+        ));
     }
 
-    $schoolYears = SchoolYear::orderByDesc('yearStart')->get();
-    $studentCount = User::where('roleID', 3)->count();
-    $section = Section::count();
 
-    if ($activeYear) {
-        $totalEnrolled = Enrollment::where('schoolYearID', $activeYear->id)->count();
+    public function teacherDashboard(Request $request)
+    {
+        $user = Auth::user();
+
+        Cookie::queue('username', $user->name, 60);
+
+        $selectedYearID = $request->input('schoolYear');
+
+        // If a specific year is selected, get it; otherwise get the active year
+        if ($selectedYearID) {
+            $activeYear = SchoolYear::find($selectedYearID);
+        } else {
+            $activeYear = SchoolYear::where('status', 'active')->first();
+        }
+
+        $schoolYears = SchoolYear::orderByDesc('yearStart')->get();
+        $studentCount = User::where('roleID', 2)->count();
+        $section = Section::count();
+
+        $enrollment = Enrollment::with('strand')
+            ->where('userID', $user->id)
+            ->latest() // in case they have multiple enrollments, pick latest
+            ->first();
+
+        return view('TeacherComponents.dashboard', compact('activeYear', 'schoolYears', 'studentCount', 'section', 'user', 'enrollment'));
     }
 
-    return view('AdminComponents.dashboard', compact(
-        'activeYear',
+    public function studentDashboard(Request $request)
+    {
+
+        $user = Auth::user();
+
+        Cookie::queue('username', $user->name, 60);
+
+        $selectedYearID = $request->input('schoolYear');
+
+        // If a specific year is selected, get it; otherwise get the active year
+        if ($selectedYearID) {
+            $activeYear = SchoolYear::find($selectedYearID);
+        } else {
+            $activeYear = SchoolYear::where('status', 'active')->first();
+        }
+
+        $schoolYears = SchoolYear::orderByDesc('yearStart')->get();
+        $studentCount = User::where('roleID', 3)->count();
+        $section = Section::count();
+
+        $enrollment = Enrollment::with('strand')
+            ->where('userID', $user->id)
+            ->latest() // in case they have multiple enrollments, pick latest
+            ->first();
+
+        return view('StudentComponents.dashboard', compact('activeYear', 'schoolYears', 'studentCount', 'section', 'user', 'enrollment'));
+    }
+
+    public function operatorDashboard(Request $request)
+    {
+        $selectedYearID = $request->input('schoolYear');
+
+        // If a specific year is selected, get it; otherwise get the active year
+        if ($selectedYearID) {
+            $activeYear = SchoolYear::find($selectedYearID);
+        } else {
+            $activeYear = SchoolYear::where('status', 'active')->first();
+        }
+
+        $schoolYears = SchoolYear::orderByDesc('yearStart')->get();
+        $studentCount = User::where('roleID', 3)->count();
+        $section = Section::count();
+
+        if ($activeYear) {
+            $totalEnrolled = Enrollment::where('schoolYearID', $activeYear->id)->count();
+        }
+        return view('OperatorComponents.dashboard', compact(     'activeYear',
         'schoolYears',
         'studentCount',
         'section',
-        'totalEnrolled' // Pass it to the view
-    ));
-}
-
-
-    public function teacherDashboard()
-    {
-        return view('dashboard.teacher');
-    }
-
-    public function studentDashboard()
-    {
-        return view('dashboard.student');
-    }
-
-    public function operatorDashboard()
-
-    {
-        $activeYear = SchoolYear::where('status', 'active')->first();
-        $studentCount = User::where('roleID', 3)->count();
-        $section = Section::get()->count();
-
-        return view('OperatorComponents.dashboard', compact('activeYear', 'studentCount', 'section'));
+        'totalEnrolled'));
     }
 }

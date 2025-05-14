@@ -3,13 +3,13 @@
 @section('title', 'UMIANKonek | Admin')
 
 @section('content')
-    <header class="text-center mb-2">
-        <h1>REPORT HISTORY</h1>
-        <p>ENROLLMENT HISTORY</p>
+    <header class="text-center mb-4">
+        <h1 class="fw-bold">REPORT HISTORY</h1>
+        <p class="text-muted">ENROLLMENT HISTORY</p>
     </header>
 
     {{-- SEARCH & FILTER --}}
-    <div class="d-flex justify-content-between align-items-center mt-5 flex-wrap gap-3">
+    <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3">
         <!-- Search Input -->
         <div class="search-container">
             <form action="{{ route('AdminComponents.enrollmenthistory') }}" method="GET">
@@ -20,50 +20,55 @@
             </form>
         </div>
 
-        <!-- Grade Level Filter -->
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                {{ request('gradeLevel', 'Grade Level') }}
-            </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{{ route('AdminComponents.enrollmenthistory', ['gradeLevel' => 'Grade 11'] + request()->except('page')) }}">Grade 11</a></li>
-                <li><a class="dropdown-item" href="{{ route('AdminComponents.enrollmenthistory', ['gradeLevel' => 'Grade 12'] + request()->except('page')) }}">Grade 12</a></li>
-            </ul>
-        </div>
+        <div class="d-flex gap-3">
+            <!-- Grade Level Filter -->
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-graduation-cap"></i>
+                    {{ request('gradeLevel', 'Grade Level') }}
+                </button>
+                <ul class="dropdown-menu shadow-sm">
+                    <li><a class="dropdown-item" href="{{ route('AdminComponents.enrollmenthistory', ['gradeLevel' => 'Grade 11'] + request()->except('page')) }}">Grade 11</a></li>
+                    <li><a class="dropdown-item" href="{{ route('AdminComponents.enrollmenthistory', ['gradeLevel' => 'Grade 12'] + request()->except('page')) }}">Grade 12</a></li>
+                </ul>
+            </div>
 
-        <!-- Semester Filter -->
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                {{ request('semester', 'Semester') }}
-            </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{{ route('AdminComponents.enrollmenthistory', ['semester' => 'Sem 1'] + request()->except('page')) }}">1st Sem</a></li>
-                <li><a class="dropdown-item" href="{{ route('AdminComponents.enrollmenthistory', ['semester' => 'Sem 2'] + request()->except('page')) }}">2nd Sem</a></li>
-            </ul>
-        </div>
+            <!-- Semester Filter -->
+            <div class="dropdown">
+                <button class="btn btn-outline-info dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-calendar-alt"></i>
+                    {{ request('semester', 'Semester') }}
+                </button>
+                <ul class="dropdown-menu shadow-sm">
+                    <li><a class="dropdown-item" href="{{ route('AdminComponents.enrollmenthistory', ['semester' => 'Sem 1'] + request()->except('page')) }}">1st Sem</a></li>
+                    <li><a class="dropdown-item" href="{{ route('AdminComponents.enrollmenthistory', ['semester' => 'Sem 2'] + request()->except('page')) }}">2nd Sem</a></li>
+                </ul>
+            </div>
 
-        <!-- School Year Filter -->
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                @php
-                    $selectedSY = $schoolYears->firstWhere('id', request('schoolYear'));
-                @endphp
-                {{ $selectedSY ? $selectedSY->yearStart . ' - ' . $selectedSY->yearEnd : 'School Year' }}
-            </button>
-            <ul class="dropdown-menu">
-                @foreach ($schoolYears as $year)
-                    <li>
-                        <a class="dropdown-item" href="{{ route('AdminComponents.enrollmenthistory', ['schoolYear' => $year->id] + request()->except('page')) }}">
-                            {{ $year->yearStart }} - {{ $year->yearEnd }}
-                        </a>
-                    </li>
-                @endforeach
-            </ul>
+            <!-- School Year Filter -->
+            <div class="dropdown">
+                <button class="btn btn-outline-success dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-calendar"></i>
+                    @php
+                        $selectedSY = $schoolYears->firstWhere('id', request('schoolYear'));
+                    @endphp
+                    {{ $selectedSY ? $selectedSY->yearStart . ' - ' . $selectedSY->yearEnd : 'School Year' }}
+                </button>
+                <ul class="dropdown-menu shadow-sm">
+                    @foreach ($schoolYears as $year)
+                        <li>
+                            <a class="dropdown-item" href="{{ route('AdminComponents.enrollmenthistory', ['schoolYear' => $year->id] + request()->except('page')) }}">
+                                {{ $year->yearStart }} - {{ $year->yearEnd }}
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
         </div>
     </div>
 
     {{-- ENROLLMENT HISTORY TABLE --}}
-    <div class="table-responsive mt-2">
+    <div class="table-responsive mt-4">
         <table class="table table-bordered">
             <thead class="thead-dark">
                 <tr>
@@ -101,7 +106,7 @@
 
         {{-- PAGINATION --}}
         <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
+            <ul class="pagination justify-content-start">
                 @if ($histories->onFirstPage())
                     <li class="page-item disabled"><span class="page-link">Previous</span></li>
                 @else
@@ -126,4 +131,21 @@
             </ul>
         </nav>
     </div>
+
+    <style>
+        .dropdown-menu {
+            border: none;
+            border-radius: 8px;
+            padding: 8px;
+        }
+        
+        .dropdown-item {
+            border-radius: 4px;
+            padding: 8px 16px;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
 @endsection

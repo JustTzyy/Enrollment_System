@@ -1,6 +1,6 @@
 @extends('Dashboard.operator')
 
-@section('title', 'UMIANKonek | Admin')
+@section('title', 'UMIANKonek | Operator')
 
 @section('operatorcontent')
     <header class="text-center mb-2">
@@ -13,63 +13,62 @@
         <!-- Search Input -->
         <div class="search-container">
 
-            <form action="{{ route('OperatorComponents.studenthistory') }}" method="GET">
-                <div class="d-flex align-items-center">
-                    <input type="text" name="search" class="search-input" placeholder="Search..."
-                        value="{{ request('search') }}">
-                    <i class="fas fa-search search-icon"></i>
-                </div>
-            </form>
-        </div>
+        <form action="{{ route('OperatorComponents.studenthistory') }}" method="GET">
+      <div class="d-flex align-items-center">
+      <input type="text" name="search" class="search-input" placeholder="Search..." value="{{ request('search') }}">
+      <i class="fas fa-search search-icon"></i>
+      </div>
+    </form>
+    </div>
 
         <!-- Status Dropdown -->
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                {{ request('status', 'Filter by Status') }}
+            <button class="btn btn-outline-info dropdown-toggle d-flex align-items-center shadow-sm rounded-pill px-3 py-2" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-filter me-2"></i> {{ request('status', 'Filter by Status') }}
             </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item"
-                        href="{{ route('OperatorComponents.studenthistory', ['status' => 'Added'] + request()->query()) }}">Added</a>
-                </li>
-                <li><a class="dropdown-item"
-                        href="{{ route('OperatorComponents.studenthistory', ['status' => 'Updated'] + request()->query()) }}">Updated</a>
-                </li>
-                <li><a class="dropdown-item"
-                        href="{{ route('OperatorComponents.studenthistory', ['status' => 'Deleted'] + request()->query()) }}">Deleted</a>
-                </li>
-                <li><a class="dropdown-item"
-                        href="{{ route('OperatorComponents.studenthistory', ['status' => 'Restored'] + request()->query()) }}">Restored</a>
-                </li>
+            <ul class="dropdown-menu shadow rounded-3 mt-1">
+                <li><a class="dropdown-item py-2" href="{{ route('AdminComponents.studenthistory', ['status' => 'Added'] + request()->query()) }}"><i class="fas fa-plus-circle text-success me-2"></i>Added</a></li>
+                <li><a class="dropdown-item py-2" href="{{ route('AdminComponents.studenthistory', ['status' => 'Updated'] + request()->query()) }}"><i class="fas fa-edit text-primary me-2"></i>Updated</a></li>
+                <li><a class="dropdown-item py-2" href="{{ route('AdminComponents.studenthistory', ['status' => 'Deleted'] + request()->query()) }}"><i class="fas fa-trash-alt text-danger me-2"></i>Deleted</a></li>
+                <li><a class="dropdown-item py-2" href="{{ route('AdminComponents.studenthistory', array_filter(request()->except('status'))) }}"><i class="fas fa-list text-info me-2"></i>All</a></li>
             </ul>
         </div>
+        <style>
+        .dropdown-menu {
+            min-width: 200px;
+            border-radius: 1rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+        .dropdown-item {
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+        }
+        .dropdown-item:hover {
+            background: #e9f5fb;
+        }
+        </style>
     </div>
 
     {{-- HISTORY TABLE --}}
-    <div class="table-responsive ">
-        <table class="table custom-table mt-2">
+    <div class="table-responsive mt-2">
+        <table class="table table-bordered">
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">ID</th>
                     <th scope="col">Fullname</th>
                     <th scope="col">Status</th>
                     <th scope="col">Date</th>
-                    <th scope="col">Details</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($histories as $history)
                     <tr>
                         <td>{{ $history->id }}</td>
-                        <td>{{ $history->user->firstName }}{{ $history->user->middleName }} {{ $history->user->lastName }}
-                        </td>
+                        <td>{{ $history->user->firstName }}{{ $history->user->middleName  }} {{ $history->user->lastName  }}</td>
                         <td>{{ $history->status }}</td>
                         <td>{{ \Carbon\Carbon::parse($history->created_at)->format('F j, Y, h:i A') }}</td>
-
-                        <td class="text-center">
-                            <button type="button" class="btn btn-primary btn-sm">
-                                <i class="fa-solid fa-circle-info"></i>
-                            </button>
-                        </td>
+                        
+                      
                     </tr>
                 @empty
                     <tr>
@@ -106,4 +105,5 @@
             </ul>
         </nav>
 
-    @endsection
+
+@endsection

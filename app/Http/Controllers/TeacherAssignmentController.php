@@ -2,58 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreTeacherAssignmentRequest;
 use App\Models\Subject;
 use App\Models\TeacherAssignment;
 use App\Models\User;
-use App\Models\Strand;
-use DB;
-use Exception;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
+use Exception;
+use DB;
 
 class TeacherAssignmentController extends Controller
 {
-
+    /**
+     * Display the teacher assignments page
+     */
     public function teacherAssignment(Request $request)
     {
-        $query = TeacherAssignment::with(['user', 'subject']);
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('code', 'LIKE', "%{$search}%")
-                    ->orWhere('id', 'LIKE', "{$search}")
-                    ->orWhereHas('subject', fn($q) =>
-                        $q->where('subject', 'LIKE', "%{$search}%"))
-                    ->orWhereHas('user', fn($q) =>
-                        $q->where('firstName', 'LIKE', "%{$search}%")
-                            ->orWhere('middleName', 'LIKE', "%{$search}%")
-                            ->orWhere('lastName', 'LIKE', "%{$search}%"));
-            });
-        }
-
-        $assignments = $query->get(); 
-        $users = User::where('roleID', 2)
-        ->whereIn('id', function($query) {
-            $query->select('userID')->from('teacher_assignments')->distinct();
-        })
-        ->paginate(5);
-
+        // Get all assignments with relationships
+        $assignments = $this->getAssignments($request);
+        
+        // Get paginated teachers (5 per page)
+        $users = $this->getPaginatedTeachers();
+        
+        // Get all teachers for dropdown
         $users2 = User::where('roleID', 2)->get();
        
+        // Get all subjects
                 $subjects = Subject::all();
 
-        return view(
-            'AdminComponents.teacherassignment',
-            compact('assignments', 'users', 'subjects', 'users2')
-        );
+        return view('AdminComponents.teacherassignment', compact('assignments', 'users', 'subjects', 'users2'));
     }
 
-
-
-
-
+    /**
+     * Store new teacher assignments
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -82,9 +63,11 @@ class TeacherAssignmentController extends Controller
         }
     }
 
+    /**
+     * Update teacher assignments
+     */
     public function update(Request $request, $userId)
     {
-        // Validate that we have at least one subjectID, and that each exists
         $data = $request->validate([
             'subjectIDs' => 'required|array|min:1',
             'subjectIDs.*' => 'exists:subjects,id',
@@ -92,16 +75,28 @@ class TeacherAssignmentController extends Controller
 
         try {
             DB::transaction(function () use ($userId, $data) {
-                // 1) Remove all existing assignments for this teacher
-                TeacherAssignment::where('userID', $userId)->delete();
+                // Get current assignments for this teacher
+                $currentAssignments = TeacherAssignment::where('userID', $userId)->get();
+                $currentSubjectIDs = $currentAssignments->pluck('subjectID')->toArray();
 
-                // 2) Re‐create for each submitted subjectID
-                foreach ($data['subjectIDs'] as $subjectID) {
+                // Find subjects to delete and add
+                $subjectsToDelete = array_diff($currentSubjectIDs, $data['subjectIDs']);
+                $subjectsToAdd = array_diff($data['subjectIDs'], $currentSubjectIDs);
+
+                // Delete removed subjects
+                if (!empty($subjectsToDelete)) {
+                    TeacherAssignment::where('userID', $userId)
+                        ->whereIn('subjectID', $subjectsToDelete)
+                        ->delete();
+                }
+
+                // Add new subjects
+                foreach ($subjectsToAdd as $subjectID) {
                     $assignment = TeacherAssignment::create([
                         'userID' => $userId,
                         'subjectID' => $subjectID,
                     ]);
-                    // regenerate a unique code if needed
+
                     $assignment->update(['code' => 'teach' . $assignment->id]);
                 }
             });
@@ -114,6 +109,9 @@ class TeacherAssignmentController extends Controller
         }
     }
 
+    /**
+     * Delete a teacher assignment
+     */
     public function destroy($id)
     {
         try {
@@ -124,5 +122,41 @@ class TeacherAssignmentController extends Controller
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Failed to delete teacher assignment: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Get assignments with search functionality
+     */
+    private function getAssignments(Request $request)
+    {
+        $query = TeacherAssignment::with(['user', 'subject']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('code', 'LIKE', "%{$search}%")
+                    ->orWhere('id', 'LIKE', "{$search}")
+                    ->orWhereHas('subject', fn($q) =>
+                        $q->where('subject', 'LIKE', "%{$search}%"))
+                    ->orWhereHas('user', fn($q) =>
+                        $q->where('firstName', 'LIKE', "%{$search}%")
+                            ->orWhere('middleName', 'LIKE', "%{$search}%")
+                            ->orWhere('lastName', 'LIKE', "%{$search}%"));
+            });
+        }
+
+        return $query->get();
+    }
+
+    /**
+     * Get paginated teachers
+     */
+    private function getPaginatedTeachers()
+    {
+        return User::where('roleID', 2)
+            ->whereIn('id', function($query) {
+                $query->select('userID')->from('teacher_assignments')->distinct();
+            })
+            ->paginate(5);
     }
 }

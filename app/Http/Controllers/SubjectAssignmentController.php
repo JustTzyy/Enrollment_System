@@ -85,12 +85,32 @@ class SubjectAssignmentController extends Controller
 
         try {
             \DB::transaction(function () use ($strandID, $request) {
-                SubjectAssignment::where('strandID', $strandID)
+                // Get current assignments for this strand
+                $currentAssignments = SubjectAssignment::where('strandID', $strandID)
                     ->where('gradeLevel', $request->gradeLevel)
                     ->where('semester', $request->semester)
-                    ->delete();
+                    ->get();
 
-                foreach ($request->subjectIDs as $subjectID) {
+                // Get IDs of current assignments
+                $currentSubjectIDs = $currentAssignments->pluck('subjectID')->toArray();
+                
+                // Find subjects to delete (in current but not in new list)
+                $subjectsToDelete = array_diff($currentSubjectIDs, $request->subjectIDs);
+                
+                // Find subjects to add (in new list but not in current)
+                $subjectsToAdd = array_diff($request->subjectIDs, $currentSubjectIDs);
+
+                // Delete removed subjects
+                if (!empty($subjectsToDelete)) {
+                    SubjectAssignment::where('strandID', $strandID)
+                        ->where('gradeLevel', $request->gradeLevel)
+                        ->where('semester', $request->semester)
+                        ->whereIn('subjectID', $subjectsToDelete)
+                    ->delete();
+                }
+
+                // Add new subjects
+                foreach ($subjectsToAdd as $subjectID) {
                     $assignment = SubjectAssignment::create([
                         'strandID' => $strandID,
                         'subjectID' => $subjectID,
@@ -100,6 +120,15 @@ class SubjectAssignmentController extends Controller
                     ]);
 
                     $assignment->update(['code' => 'subj' . $assignment->id]);
+                }
+
+                // Update timeLimit for existing assignments
+                if (!empty($request->timeLimit)) {
+                    SubjectAssignment::where('strandID', $strandID)
+                        ->where('gradeLevel', $request->gradeLevel)
+                        ->where('semester', $request->semester)
+                        ->whereIn('subjectID', array_intersect($currentSubjectIDs, $request->subjectIDs))
+                        ->update(['timeLimit' => $request->timeLimit]);
                 }
             });
 

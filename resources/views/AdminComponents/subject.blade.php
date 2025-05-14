@@ -42,9 +42,6 @@
             <button type="button" class="btn btncustom mx-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 Add Subject
             </button>
-            <button type="button" class="btn btnarchive mx-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Archived
-            </button>
         </div>
     </div>
 
@@ -66,51 +63,55 @@
                         <th scope="row">{{ $subject->id }}</th>
                         <td>{{ $subject->subject }}</td>
                         <td>{{ $subject->type}} </td>
-                        <td><button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
-                        data-bs-target="#userDetailsModal{{ $subject->id }}">See More</button> </td>
-                        <td class="d-flex justify-content-center gap-2">
-
-                            <button class="btn btn-primary btn-sm" onclick="if(confirm('Are you sure you want to edit this subject?')) { 
-                                                              var myModal = new bootstrap.Modal(document.getElementById('updateSubjectModal{{ $subject->id }}')); 
-                                                              myModal.show(); 
-                                                                 }">
-                                <i class="fa-solid fa-circle-info"></i>
+                        <td>
+                            <button type="button" class="btn btn-outline-info btn-sm " data-bs-toggle="modal" data-bs-target="#userDetailsModal{{ $subject->id }}">
+                                <i class="fas fa-eye me-1"></i> See More
                             </button>
-
-                            <form action="{{ route('subject.destroy', $subject->id) }}" method="POST"
-                                onsubmit="return confirm('Are you sure you want to delete this subject?');"
-                                style="display:inline;">
+                        </td>
+                        <td class="d-flex justify-content-center gap-2">
+                            <button class="btn btn-outline-primary btn-sm d-flex align-items-center" onclick="if(confirm('Are you sure you want to edit this subject?')) { var myModal = new bootstrap.Modal(document.getElementById('updateSubjectModal{{ $subject->id }}')); myModal.show(); }">
+                                <i class="fas fa-pen me-1"></i> Edit
+                            </button>
+                            <form action="{{ route('subject.destroy', $subject->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this subject?');" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">
-                                    <i class="fa-solid fa-box-archive"></i>
+                                <button type="submit" class="btn btn-outline-danger btn-sm d-flex align-items-center">
+                                    <i class="fas fa-trash me-1"></i> Delete
                                 </button>
                             </form>
-
                         </td>
 
                          <!-- Modal -->
                          <div class="modal fade" id="userDetailsModal{{ $subject->id }}" tabindex="-1"
                             aria-labelledby="userDetailsModalLabel{{ $subject->id }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="userDetailsModalLabel{{ $subject->id }}">Subject Details</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content shadow-lg border-0">
+                                    <div class="modal-header bg-info text-white">
+                                        <h5 class="modal-title d-flex align-items-center" id="userDetailsModalLabel{{ $subject->id }}">
+                                            <i class="fas fa-info-circle me-2"></i>Subject Details
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <div class="modal-body">
-                                    <dt class="col-sm-4">subject Name:</dt>
-                                    <dd class="col-sm-8">{{ $subject->subject}}</dd>
-
-                                    <dt class="col-sm-4">subject Type:</dt>
-                                    <dd class="col-sm-8">{{ $subject->type}}</dd>
-
-                                    <dt class="col-sm-4">subject description:</dt>
-                                    <dd class="col-sm-8">{{ $subject->description}}</dd>
+                                    <div class="modal-body text-start">
+                                        <div class="card border-0">
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <h6 class="fw-bold text-info mb-2"><i class="fas fa-book me-2 text-info"></i>Subject Name</h6>
+                                                    <div class="ps-4 text-justify">{{ $subject->subject }}</div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <h6 class="fw-bold text-info mb-2"><i class="fas fa-tag me-2 text-info"></i>Type</h6>
+                                                    <div class="ps-4 text-justify">{{ $subject->type }}</div>
+                                                </div>
+                                                <div>
+                                                    <h6 class="fw-bold text-info mb-2"><i class="fas fa-align-left me-2 text-info"></i>Description</h6>
+                                                    <div class="ps-4 text-justify">{{ $subject->description }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <div class="modal-footer bg-light">
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                                     </div>
                                 </div>
                             </div>

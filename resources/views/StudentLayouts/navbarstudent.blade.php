@@ -12,10 +12,10 @@
                     id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="User Icon" width="30"
                         height="30" class="me-2">
-                    <span>{{ Cookie::get('username') }}</span>
+                    <span>{{ $user->firstName ?? '' }} {{ $user->middleName ?? '' }} {{ $user->lastName ?? '' }}</span>
                 </button>
                 <ul class="dropdown-menu admindropdown " aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item " href="{{ route('OperatorComponents.setting') }}">Settings</a></li>
+                    <li><a href=" {{ route('StudentComponents.setting') }}" class="dropdown-item ">Settings</a></li>
                     <li>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
